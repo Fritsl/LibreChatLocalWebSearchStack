@@ -83,7 +83,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       : '';
     
     services.push(`  bge-reranker:
-    image: bge/reranker-v2-m3:${config.bgeReranker.version}
+    image: wkao/bge-reranker-v2-m3:${config.bgeReranker.version}
     container_name: librechat-reranker
     environment:
       - MODEL_NAME=${config.bgeReranker.modelType}
