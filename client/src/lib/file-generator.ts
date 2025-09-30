@@ -19,7 +19,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       : '';
     
     services.push(`  searxng:
-    image: searxng/searxng:latest
+    image: searxng/searxng:${config.searxng.version}
     container_name: librechat-searxng
     environment:
       - SEARXNG_BASE_URL=http://localhost:${config.searxng.port}/
@@ -52,7 +52,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       : '';
     
     services.push(`  jina-reader:
-    image: jinaai/reader:latest
+    image: jinaai/reader:${config.jinaReader.version}
     container_name: librechat-jina
     environment:
       - READER_TIMEOUT=${config.jinaReader.timeout}
@@ -83,7 +83,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       : '';
     
     services.push(`  bge-reranker:
-    image: bge/reranker-v2-m3:latest
+    image: bge/reranker-v2-m3:${config.bgeReranker.version}
     container_name: librechat-reranker
     environment:
       - MODEL_NAME=${config.bgeReranker.modelType}

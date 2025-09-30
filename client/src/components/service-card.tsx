@@ -34,6 +34,12 @@ const serviceInfo = {
   },
 };
 
+const serviceVersions = {
+  searxng: ['latest', '2024.11.1', '2024.10.2', '2024.9.1'],
+  jinaReader: ['latest', 'v1.2.0', 'v1.1.0', 'v1.0.0'],
+  bgeReranker: ['latest', 'v2.0', 'v1.5', 'v1.0'],
+};
+
 export function ServiceCard({ service, config, onConfigChange }: ServiceCardProps) {
   const info = serviceInfo[service];
   const serviceConfig = config[service] as any;
@@ -76,7 +82,7 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
       </CardHeader>
       
       <CardContent className="p-6 space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label htmlFor={`${service}-port`} className="text-sm font-medium text-foreground mb-2 block">
               Port
@@ -117,6 +123,26 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
                     <SelectItem value="4GB">4GB</SelectItem>
                   </>
                 )}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor={`${service}-version`} className="text-sm font-medium text-foreground mb-2 block">
+              Docker Image Version
+            </Label>
+            <Select 
+              value={serviceConfig.version} 
+              onValueChange={(value) => updateServiceConfig({ version: value })}
+            >
+              <SelectTrigger data-testid={`select-${service}-version`} className="bg-input border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {serviceVersions[service].map((version) => (
+                  <SelectItem key={version} value={version}>
+                    {version}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
