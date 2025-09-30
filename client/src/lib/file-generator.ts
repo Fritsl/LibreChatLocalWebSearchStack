@@ -370,6 +370,7 @@ export async function downloadConfigPackage(config: ServiceConfig): Promise<void
   zip.file('.env.example', generateEnvFile(config));
   zip.file('README.md', generateReadme(config));
   zip.file('install_dockerimage.sh', generateInstallScript(config));
+  zip.file('search-stack-config.json', generateJsonConfig(config));
   
   const content = await zip.generateAsync({ type: 'blob' });
   saveAs(content, 'librechat-search-stack.zip');
