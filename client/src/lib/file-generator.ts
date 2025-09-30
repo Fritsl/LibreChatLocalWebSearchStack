@@ -334,6 +334,33 @@ For issues related to:
 - Jina AI: https://github.com/jina-ai/reader`;
 }
 
+export function generateJsonConfig(config: ServiceConfig): string {
+  const jsonConfig = {
+    name: "Search Stack Configuration",
+    configuration: {
+      searchProvider: "searxng",
+      searxngInstanceUrl: config.searxng.enabled ? `http://localhost:${config.searxng.port}` : "",
+      searxngApiKey: "",
+      scraperType: "firecrawl",
+      firecrawlApiUrl: config.jinaReader.enabled ? `http://localhost:${config.jinaReader.port}` : "",
+      firecrawlApiKey: "",
+      rerankerType: "jina",
+      jinaApiKey: "",
+      jinaRerankerUrl: config.bgeReranker.enabled ? `http://localhost:${config.bgeReranker.port}` : "",
+      scraperTimeout: 7500,
+      safeSearch: 1
+    }
+  };
+  
+  return JSON.stringify(jsonConfig, null, 2);
+}
+
+export function downloadJsonConfig(config: ServiceConfig): void {
+  const jsonContent = generateJsonConfig(config);
+  const blob = new Blob([jsonContent], { type: 'application/json' });
+  saveAs(blob, 'search-stack-config.json');
+}
+
 export async function downloadConfigPackage(config: ServiceConfig): Promise<void> {
   const zip = new JSZip();
   

@@ -8,10 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ServiceCard } from "@/components/service-card";
 import { PreviewPanel } from "@/components/preview-panel";
-import { downloadConfigPackage } from "@/lib/file-generator";
+import { downloadConfigPackage, downloadJsonConfig } from "@/lib/file-generator";
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
 import { configPresets } from "@/lib/presets";
-import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap } from "lucide-react";
+import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson } from "lucide-react";
 
 export default function Home() {
   const [config, setConfig] = useState<ServiceConfig>(serviceConfigSchema.parse({}));
@@ -36,6 +36,14 @@ export default function Home() {
       await downloadConfigPackage(config);
     } catch (error) {
       console.error('Failed to generate package:', error);
+    }
+  };
+
+  const handleExportJson = () => {
+    try {
+      downloadJsonConfig(config);
+    } catch (error) {
+      console.error('Failed to export JSON config:', error);
     }
   };
 
@@ -227,14 +235,25 @@ export default function Home() {
                       <h3 className="text-lg font-medium text-foreground mb-1">Generate Stack</h3>
                       <p className="text-sm text-muted-foreground">Create your Docker Compose configuration files</p>
                     </div>
-                    <Button 
-                      onClick={handleGenerate}
-                      data-testid="button-generate"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90"
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      Generate & Download
-                    </Button>
+                    <div className="flex gap-3">
+                      <Button 
+                        onClick={handleExportJson}
+                        data-testid="button-export-json"
+                        variant="outline"
+                        className="border-primary text-primary hover:bg-primary/10"
+                      >
+                        <FileJson className="mr-2 h-4 w-4" />
+                        Export Configuration
+                      </Button>
+                      <Button 
+                        onClick={handleGenerate}
+                        data-testid="button-generate"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Generate & Download
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
