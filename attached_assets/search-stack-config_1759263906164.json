@@ -1,0 +1,15 @@
+{
+  "name": "Search Stack Configuration",
+  "configuration": {
+    "webSearch": {
+      "searchProvider": "searxng",
+      "searxngInstanceUrl": "http://localhost:8080",
+      "scraperType": "firecrawl",
+      "firecrawlApiUrl": "http://localhost:3000",
+      "rerankerType": "jina",
+      "jinaRerankerUrl": "http://localhost:8787",
+      "scraperTimeout": 7500,
+      "safeSearch": true
+    }
+  }
+}

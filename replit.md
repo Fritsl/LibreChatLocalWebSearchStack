@@ -8,6 +8,13 @@ This is a web application that generates Docker Compose configurations for the L
 
 The application is a configuration generator tool - it doesn't require persistent data storage and operates entirely client-side for configuration generation.
 
+### API Key Management
+- Each service has a configurable API key field with fixed defaults for testing consistency
+- Default API keys: `searxng-default-key-12345`, `jina-default-key-67890`, `reranker-default-key-abcde`
+- Users can generate random UUID keys using the refresh button next to each API key field
+- API keys are included in all generated files (docker-compose.yml, .env.example, README.md, install script, and JSON config)
+- JSON export follows LibreChat schema: `searxngApiKey`, `firecrawlApiKey`, `jinaApiKey`
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
