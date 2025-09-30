@@ -10,14 +10,25 @@ import { ServiceCard } from "@/components/service-card";
 import { PreviewPanel } from "@/components/preview-panel";
 import { downloadConfigPackage } from "@/lib/file-generator";
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
-import { Download, Github, Moon, Sun, HeartPulse, Settings } from "lucide-react";
+import { configPresets } from "@/lib/presets";
+import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap } from "lucide-react";
 
 export default function Home() {
   const [config, setConfig] = useState<ServiceConfig>(serviceConfigSchema.parse({}));
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [selectedPreset, setSelectedPreset] = useState('custom');
 
   const handleConfigChange = (updates: Partial<ServiceConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }));
+    setSelectedPreset('custom');
+  };
+
+  const handlePresetChange = (presetId: string) => {
+    const preset = configPresets.find(p => p.id === presetId);
+    if (preset) {
+      setConfig(preset.config);
+      setSelectedPreset(presetId);
+    }
   };
 
   const handleGenerate = async () => {
@@ -79,6 +90,38 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Configuration Panel */}
             <div className="lg:col-span-2 space-y-6">
+              {/* Preset Selector */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Zap className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <Label className="text-sm font-medium text-foreground">Configuration Preset</Label>
+                        <p className="text-xs text-muted-foreground">Quick start with preconfigured settings</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {configPresets.map(preset => (
+                        <button
+                          key={preset.id}
+                          data-testid={`button-preset-${preset.id}`}
+                          onClick={() => handlePresetChange(preset.id)}
+                          className={`p-4 rounded-lg border-2 transition-all text-left ${
+                            selectedPreset === preset.id
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border bg-card hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="font-medium text-sm text-foreground mb-1">{preset.name}</div>
+                          <div className="text-xs text-muted-foreground">{preset.description}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Overview Card */}
               <Card>
                 <CardContent className="pt-6 space-y-4">
@@ -110,7 +153,7 @@ export default function Home() {
                       id="health-checks"
                       data-testid="switch-health-checks"
                       checked={config.enableHealthChecks}
-                      onCheckedChange={(checked) => setConfig(prev => ({ ...prev, enableHealthChecks: checked }))}
+                      onCheckedChange={(checked) => handleConfigChange({ enableHealthChecks: checked })}
                     />
                   </div>
                 </CardContent>
@@ -134,7 +177,7 @@ export default function Home() {
                           </Label>
                           <Select 
                             value={config.restartPolicy} 
-                            onValueChange={(value: any) => setConfig(prev => ({ ...prev, restartPolicy: value }))}
+                            onValueChange={(value: any) => handleConfigChange({ restartPolicy: value })}
                           >
                             <SelectTrigger data-testid="select-restart-policy" className="bg-input border-border">
                               <SelectValue />

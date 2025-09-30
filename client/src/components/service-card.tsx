@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import type { ServiceConfig } from '@shared/schema';
 
 interface ServiceCardProps {
@@ -44,7 +45,7 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
   };
 
   return (
-    <Card data-testid={`card-${service}`} className="overflow-hidden">
+    <Card data-testid={`card-${service}`} className={`overflow-hidden transition-opacity ${!serviceConfig.enabled ? 'opacity-60' : ''}`}>
       <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -56,14 +57,21 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
               <p className="text-sm text-muted-foreground">{info.description}</p>
             </div>
           </div>
-          <Badge 
-            variant="outline" 
-            className="bg-green-500/10 text-green-500 border-green-500/20"
-            data-testid={`status-${service}`}
-          >
-            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-            Enabled
-          </Badge>
+          <div className="flex items-center space-x-3">
+            <Badge 
+              variant="outline" 
+              className={serviceConfig.enabled ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-gray-500/10 text-gray-500 border-gray-500/20"}
+              data-testid={`status-${service}`}
+            >
+              <span className={`w-2 h-2 rounded-full mr-2 ${serviceConfig.enabled ? 'bg-green-500' : 'bg-gray-500'}`}></span>
+              {serviceConfig.enabled ? 'Enabled' : 'Disabled'}
+            </Badge>
+            <Switch
+              data-testid={`switch-${service}-enable`}
+              checked={serviceConfig.enabled}
+              onCheckedChange={(checked) => updateServiceConfig({ enabled: checked })}
+            />
+          </div>
         </div>
       </CardHeader>
       
