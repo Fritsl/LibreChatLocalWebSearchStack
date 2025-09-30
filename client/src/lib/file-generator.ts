@@ -52,7 +52,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       : '';
     
     services.push(`  jina-reader:
-    image: jinaai/reader:${config.jinaReader.version}
+    image: ghcr.io/intergalacticalvariable/reader:${config.jinaReader.version}
     container_name: librechat-jina
     environment:
       - READER_TIMEOUT=${config.jinaReader.timeout}
