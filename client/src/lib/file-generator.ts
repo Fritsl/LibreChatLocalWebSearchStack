@@ -6,6 +6,14 @@ export function generateDockerCompose(config: ServiceConfig): string {
   const services: string[] = [];
   
   if (config.searxng.enabled) {
+    const healthCheck = config.enableHealthChecks ? `
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s` : '';
+    
     services.push(`  searxng:
     image: searxng/searxng:latest
     container_name: librechat-searxng
@@ -19,7 +27,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       - ./searxng:/etc/searxng:rw
     restart: unless-stopped
     networks:
-      - librechat-search
+      - librechat-search${healthCheck}
     deploy:
       resources:
         limits:
@@ -27,6 +35,14 @@ export function generateDockerCompose(config: ServiceConfig): string {
   }
 
   if (config.jinaReader.enabled) {
+    const healthCheck = config.enableHealthChecks ? `
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s` : '';
+    
     services.push(`  jina-reader:
     image: jinaai/reader:latest
     container_name: librechat-jina
@@ -37,7 +53,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       - "${config.jinaReader.port}:3000"
     restart: unless-stopped
     networks:
-      - librechat-search
+      - librechat-search${healthCheck}
     deploy:
       resources:
         limits:
@@ -45,6 +61,14 @@ export function generateDockerCompose(config: ServiceConfig): string {
   }
 
   if (config.bgeReranker.enabled) {
+    const healthCheck = config.enableHealthChecks ? `
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8787/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s` : '';
+    
     services.push(`  bge-reranker:
     image: bge/reranker-v2-m3:latest
     container_name: librechat-reranker
@@ -55,7 +79,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       - "${config.bgeReranker.port}:8787"
     restart: unless-stopped
     networks:
-      - librechat-search
+      - librechat-search${healthCheck}
     deploy:
       resources:
         limits:

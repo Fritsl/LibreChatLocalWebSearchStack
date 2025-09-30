@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { ServiceCard } from "@/components/service-card";
 import { PreviewPanel } from "@/components/preview-panel";
 import { downloadConfigPackage } from "@/lib/file-generator";
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
-import { Download, Github, Moon, Sun } from "lucide-react";
+import { Download, Github, Moon, Sun, HeartPulse } from "lucide-react";
 
 export default function Home() {
   const [config, setConfig] = useState<ServiceConfig>(serviceConfigSchema.parse({}));
@@ -76,7 +78,7 @@ export default function Home() {
             <div className="lg:col-span-2 space-y-6">
               {/* Overview Card */}
               <Card>
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 space-y-4">
                   <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-2xl">
                       🐳
@@ -87,6 +89,26 @@ export default function Home() {
                         Configure and generate a complete Docker Compose setup with SearXNG, Jina AI Reader, and BGE Reranker services for LibreChat integration.
                       </p>
                     </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <div className="flex items-center space-x-3">
+                      <HeartPulse className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <Label htmlFor="health-checks" className="text-sm font-medium text-foreground">
+                          Enable Health Checks
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Monitor service health automatically
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      id="health-checks"
+                      data-testid="switch-health-checks"
+                      checked={config.enableHealthChecks}
+                      onCheckedChange={(checked) => setConfig(prev => ({ ...prev, enableHealthChecks: checked }))}
+                    />
                   </div>
                 </CardContent>
               </Card>
