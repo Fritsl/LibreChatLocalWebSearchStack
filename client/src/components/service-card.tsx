@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 import type { ServiceConfig } from '@shared/schema';
 
 interface ServiceCardProps {
@@ -48,6 +50,11 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
     onConfigChange({
       [service]: { ...serviceConfig, ...updates }
     });
+  };
+
+  const generateRandomKey = () => {
+    const randomKey = crypto.randomUUID();
+    updateServiceConfig({ apiKey: randomKey });
   };
 
   return (
@@ -146,6 +153,37 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
               </SelectContent>
             </Select>
           </div>
+        </div>
+
+        <div>
+          <Label htmlFor={`${service}-apikey`} className="text-sm font-medium text-foreground mb-2 block">
+            API Key
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              id={`${service}-apikey`}
+              data-testid={`input-${service}-apikey`}
+              type="text"
+              value={serviceConfig.apiKey}
+              onChange={(e) => updateServiceConfig({ apiKey: e.target.value })}
+              className="bg-input border-border flex-1"
+              placeholder="Enter API key or generate random"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              data-testid={`button-${service}-generate-key`}
+              onClick={generateRandomKey}
+              title="Generate random API key"
+              className="shrink-0"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Fixed default key for testing. Click refresh to generate random UUID.
+          </p>
         </div>
 
         {service === 'jinaReader' && (

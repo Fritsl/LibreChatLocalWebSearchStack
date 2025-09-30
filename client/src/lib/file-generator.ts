@@ -115,23 +115,32 @@ export function generateEnvFile(config: ServiceConfig): string {
 SEARXNG_PORT=${config.searxng.port}
 SEARXNG_MEMORY_LIMIT=${config.searxng.memoryLimit}
 SEARXNG_BASE_URL=http://localhost:${config.searxng.port}/
+SEARXNG_API_KEY=${config.searxng.apiKey}
 
 # Jina AI Reader Configuration  
 JINA_PORT=${config.jinaReader.port}
 JINA_MEMORY_LIMIT=${config.jinaReader.memoryLimit}
 JINA_TIMEOUT=${config.jinaReader.timeout}
 JINA_MAX_PAGES=${config.jinaReader.maxPages}
+FIRECRAWL_API_KEY=${config.jinaReader.apiKey}
 
 # BGE Reranker Configuration
 RERANKER_PORT=${config.bgeReranker.port}
 RERANKER_MEMORY_LIMIT=${config.bgeReranker.memoryLimit}
 RERANKER_MODEL=${config.bgeReranker.modelType}
 RERANKER_BATCH_SIZE=${config.bgeReranker.maxBatchSize}
+JINA_API_KEY=${config.bgeReranker.apiKey}
 
 # LibreChat Integration URLs
 SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}
 FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}
-RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}`;
+RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}
+
+# LibreChat Configuration
+# Copy these values to your LibreChat .env file:
+# SEARXNG_API_KEY=${config.searxng.apiKey}
+# FIRECRAWL_API_KEY=${config.jinaReader.apiKey}
+# JINA_API_KEY=${config.bgeReranker.apiKey}`;
 }
 
 export function generateInstallScript(config: ServiceConfig): string {
@@ -242,10 +251,15 @@ echo "🎉 Installation complete! Your LibreChat Search Stack is ready!"
 echo ""
 echo "💡 Next steps:"
 echo "   1. Add these environment variables to your LibreChat .env file:"${config.searxng.enabled ? `
-echo "      SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}"` : ''}${config.jinaReader.enabled ? `
-echo "      FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}"` : ''}${config.bgeReranker.enabled ? `
-echo "      RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}"` : ''}
+echo "      SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}"
+echo "      SEARXNG_API_KEY=${config.searxng.apiKey}"` : ''}${config.jinaReader.enabled ? `
+echo "      FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}"
+echo "      FIRECRAWL_API_KEY=${config.jinaReader.apiKey}"` : ''}${config.bgeReranker.enabled ? `
+echo "      RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}"
+echo "      JINA_API_KEY=${config.bgeReranker.apiKey}"` : ''}
 echo "   2. Restart LibreChat to apply the changes"
+echo ""
+echo "🔑 API Keys: These are fixed default keys for testing in closed environments."
 echo ""
 `;
 }
@@ -301,10 +315,24 @@ ${config.searxng.enabled ? `### SearXNG (Port ${config.searxng.port})
 Add these environment variables to your LibreChat configuration:
 
 \`\`\`env
-${config.searxng.enabled ? `SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}` : ''}
-${config.jinaReader.enabled ? `FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}` : ''}
-${config.bgeReranker.enabled ? `RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}` : ''}
+${config.searxng.enabled ? `SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}
+SEARXNG_API_KEY=${config.searxng.apiKey}` : ''}
+${config.jinaReader.enabled ? `FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}
+FIRECRAWL_API_KEY=${config.jinaReader.apiKey}` : ''}
+${config.bgeReranker.enabled ? `RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}
+JINA_API_KEY=${config.bgeReranker.apiKey}` : ''}
 \`\`\`
+
+### API Keys
+
+The generated API keys are fixed defaults for testing in closed environments. These keys satisfy LibreChat's configuration requirements but are not enforced by the Docker services themselves.
+
+**Your API Keys:**
+${config.searxng.enabled ? `- SearXNG: \`${config.searxng.apiKey}\`` : ''}
+${config.jinaReader.enabled ? `- Jina Reader: \`${config.jinaReader.apiKey}\`` : ''}
+${config.bgeReranker.enabled ? `- BGE Reranker: \`${config.bgeReranker.apiKey}\`` : ''}
+
+You can regenerate random keys using the configuration tool if needed for different environments.
 
 ## Management
 
@@ -339,12 +367,12 @@ export function generateJsonConfig(config: ServiceConfig): string {
       webSearch: {
         searchProvider: "searxng",
         searxngInstanceUrl: config.searxng.enabled ? `http://localhost:${config.searxng.port}` : "",
-        searxngApiKey: "",
+        searxngApiKey: config.searxng.enabled ? config.searxng.apiKey : "",
         scraperType: "firecrawl",
         firecrawlApiUrl: config.jinaReader.enabled ? `http://localhost:${config.jinaReader.port}` : "",
-        firecrawlApiKey: "",
+        firecrawlApiKey: config.jinaReader.enabled ? config.jinaReader.apiKey : "",
         rerankerType: "jina",
-        jinaApiKey: "",
+        jinaApiKey: config.bgeReranker.enabled ? config.bgeReranker.apiKey : "",
         jinaRerankerUrl: config.bgeReranker.enabled ? `http://localhost:${config.bgeReranker.port}` : "",
         scraperTimeout: 7500,
         safeSearch: true
