@@ -100,9 +100,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
           memory: ${config.bgeReranker.memoryLimit}`);
   }
 
-  return `version: '3.8'
-
-services:
+  return `services:
 ${services.join('\n\n')}
 
 networks:
@@ -219,7 +217,7 @@ if echo "$SERVICE_STATUS" | grep -q "Up"; then
     echo "✅ LibreChat Search Stack is running successfully!"
     echo ""
     echo "🌐 Access your services at:"
-${servicePorts.join('\n')}
+    ${servicePorts.map(port => `echo "${port}"`).join('\n    ')}
     echo ""
     echo "📊 Service status:"
     echo "$SERVICE_STATUS"
