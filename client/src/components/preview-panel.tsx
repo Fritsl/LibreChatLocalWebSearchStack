@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { generateDockerCompose, generateEnvFile, generateReadme } from "@/lib/file-generator";
+import { generateDockerCompose, generateEnvFile, generateReadme, generateInstallScript } from "@/lib/file-generator";
 import type { ServiceConfig } from '@shared/schema';
 
 interface PreviewPanelProps {
   config: ServiceConfig;
 }
 
-type TabType = 'docker-compose' | 'env' | 'readme';
+type TabType = 'docker-compose' | 'env' | 'readme' | 'install';
 
 export function PreviewPanel({ config }: PreviewPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('docker-compose');
@@ -17,6 +17,7 @@ export function PreviewPanel({ config }: PreviewPanelProps) {
     { id: 'docker-compose' as TabType, label: 'docker-compose.yml' },
     { id: 'env' as TabType, label: '.env.example' },
     { id: 'readme' as TabType, label: 'README.md' },
+    { id: 'install' as TabType, label: 'install_dockerimage.sh' },
   ];
 
   const getContent = (tab: TabType) => {
@@ -27,6 +28,8 @@ export function PreviewPanel({ config }: PreviewPanelProps) {
         return generateEnvFile(config);
       case 'readme':
         return generateReadme(config);
+      case 'install':
+        return generateInstallScript(config);
       default:
         return '';
     }

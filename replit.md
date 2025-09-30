@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a web application that generates Docker Compose configurations for the LibreChat Search Stack. It provides an interactive UI for configuring three services (SearXNG, Jina AI Reader, and BGE Reranker v2-m3) and generates downloadable configuration files including docker-compose.yml, .env.example, and README.md.
+This is a web application that generates Docker Compose configurations for the LibreChat Search Stack. It provides an interactive UI for configuring three services (SearXNG, Jina AI Reader, and BGE Reranker v2-m3) and generates downloadable configuration files including docker-compose.yml, .env.example, README.md, and a one-click installation script.
 
 The application is a configuration generator tool - it doesn't require persistent data storage and operates entirely client-side for configuration generation.
 
@@ -68,10 +68,11 @@ Preferred communication style: Simple, everyday language.
 - `client/src/lib/file-generator.ts` contains core generation logic
 - JSZip library creates downloadable .zip packages
 - FileSaver.js handles browser downloads
-- Three generated files:
+- Four generated files:
   - `docker-compose.yml`: Service definitions with ports, environment, resource limits
   - `.env.example`: Template environment variables
   - `README.md`: Setup instructions and documentation
+  - `install_dockerimage.sh`: One-click bash installation script
 
 **Configuration Schema**: 
 - Shared Zod schemas (`shared/schema.ts`) validate service configurations

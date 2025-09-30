@@ -136,6 +136,122 @@ FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}
 RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}`;
 }
 
+export function generateInstallScript(config: ServiceConfig): string {
+  const enabledServices = [];
+  const servicePorts: string[] = [];
+  
+  if (config.searxng.enabled) {
+    enabledServices.push("SearXNG");
+    servicePorts.push(`   - SearXNG: http://localhost:${config.searxng.port}`);
+  }
+  if (config.jinaReader.enabled) {
+    enabledServices.push("Jina AI Reader");
+    servicePorts.push(`   - Jina AI Reader: http://localhost:${config.jinaReader.port}`);
+  }
+  if (config.bgeReranker.enabled) {
+    enabledServices.push("BGE Reranker");
+    servicePorts.push(`   - BGE Reranker: http://localhost:${config.bgeReranker.port}`);
+  }
+
+  return `#!/bin/bash
+
+# =============================================================================
+# LibreChat Search Stack Installation Script
+# Generated Configuration for ${enabledServices.join(", ")}
+# =============================================================================
+
+set -e
+
+echo "🚀 Starting LibreChat Search Stack installation..."
+
+# Check if Docker is installed
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker is not installed. Please install Docker first."
+    echo "Visit: https://docs.docker.com/get-docker/"
+    exit 1
+fi
+
+# Check if Docker Compose is installed
+if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+    echo "❌ Docker Compose is not installed. Please install Docker Compose first."
+    echo "Visit: https://docs.docker.com/compose/install/"
+    exit 1
+fi
+
+echo "✅ Docker and Docker Compose are installed"
+
+# Create necessary directories
+echo "📁 Creating directories..."
+${config.searxng.enabled ? 'mkdir -p searxng' : ''}${config.jinaReader.enabled || config.bgeReranker.enabled ? '\nmkdir -p cache' : ''}
+
+# Set permissions
+${config.searxng.enabled ? 'chmod 755 searxng' : ''}${config.jinaReader.enabled || config.bgeReranker.enabled ? '\nchmod 755 cache' : ''}
+
+# Pull Docker images
+echo "📦 Pulling Docker images..."
+if docker compose version &> /dev/null; then
+    docker compose pull
+else
+    docker-compose pull
+fi
+
+# Start services
+echo "🔄 Starting LibreChat Search Stack services..."
+if docker compose version &> /dev/null; then
+    docker compose up -d
+else
+    docker-compose up -d
+fi
+
+# Wait for services to be ready
+echo "⏳ Waiting for services to start..."
+sleep 30
+
+# Check if services are running
+echo "🔍 Checking service health..."
+if docker compose version &> /dev/null; then
+    SERVICE_STATUS=$(docker compose ps)
+else
+    SERVICE_STATUS=$(docker-compose ps)
+fi
+
+if echo "$SERVICE_STATUS" | grep -q "Up"; then
+    echo "✅ LibreChat Search Stack is running successfully!"
+    echo ""
+    echo "🌐 Access your services at:"
+${servicePorts.join('\n')}
+    echo ""
+    echo "📊 Service status:"
+    echo "$SERVICE_STATUS"
+    echo ""
+    echo "📝 Useful commands:"
+    echo "   View logs: docker compose logs -f (or docker-compose logs -f)"
+    echo "   Stop services: docker compose down (or docker-compose down)"
+    echo "   Restart services: docker compose restart (or docker-compose restart)"
+    echo "   Update services: docker compose pull && docker compose up -d"
+else
+    echo "❌ Some services failed to start. Check logs:"
+    if docker compose version &> /dev/null; then
+        docker compose logs
+    else
+        docker-compose logs
+    fi
+    exit 1
+fi
+
+echo ""
+echo "🎉 Installation complete! Your LibreChat Search Stack is ready!"
+echo ""
+echo "💡 Next steps:"
+echo "   1. Add these environment variables to your LibreChat .env file:"${config.searxng.enabled ? `
+echo "      SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}"` : ''}${config.jinaReader.enabled ? `
+echo "      FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}"` : ''}${config.bgeReranker.enabled ? `
+echo "      RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}"` : ''}
+echo "   2. Restart LibreChat to apply the changes"
+echo ""
+`;
+}
+
 export function generateReadme(config: ServiceConfig): string {
   const enabledServices = [];
   if (config.searxng.enabled) enabledServices.push("SearXNG");
@@ -224,6 +340,7 @@ export async function downloadConfigPackage(config: ServiceConfig): Promise<void
   zip.file('docker-compose.yml', generateDockerCompose(config));
   zip.file('.env.example', generateEnvFile(config));
   zip.file('README.md', generateReadme(config));
+  zip.file('install_dockerimage.sh', generateInstallScript(config));
   
   const content = await zip.generateAsync({ type: 'blob' });
   saveAs(content, 'librechat-search-stack.zip');
