@@ -197,6 +197,24 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
             />
           </div>
         )}
+
+        <div>
+          <Label htmlFor={`${service}-volumes`} className="text-sm font-medium text-foreground mb-2 block">
+            Custom Volumes
+          </Label>
+          <Textarea
+            id={`${service}-volumes`}
+            data-testid={`textarea-${service}-volumes`}
+            rows={2}
+            placeholder="One volume mount per line (e.g., ./data:/app/data:rw)"
+            value={serviceConfig.customVolumes || ''}
+            onChange={(e) => updateServiceConfig({ customVolumes: e.target.value })}
+            className="bg-input border-border resize-none text-xs"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Add additional volume mounts (one per line)
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

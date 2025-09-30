@@ -3,11 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ServiceCard } from "@/components/service-card";
 import { PreviewPanel } from "@/components/preview-panel";
 import { downloadConfigPackage } from "@/lib/file-generator";
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
-import { Download, Github, Moon, Sun, HeartPulse } from "lucide-react";
+import { Download, Github, Moon, Sun, HeartPulse, Settings } from "lucide-react";
 
 export default function Home() {
   const [config, setConfig] = useState<ServiceConfig>(serviceConfigSchema.parse({}));
@@ -111,6 +114,47 @@ export default function Home() {
                     />
                   </div>
                 </CardContent>
+              </Card>
+
+              {/* Advanced Options */}
+              <Card>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="advanced" className="border-none">
+                    <AccordionTrigger className="px-6 py-4 hover:no-underline" data-testid="accordion-advanced">
+                      <div className="flex items-center space-x-3">
+                        <Settings className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">Advanced Options</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-4">
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="restart-policy" className="text-sm font-medium text-foreground mb-2 block">
+                            Restart Policy
+                          </Label>
+                          <Select 
+                            value={config.restartPolicy} 
+                            onValueChange={(value: any) => setConfig(prev => ({ ...prev, restartPolicy: value }))}
+                          >
+                            <SelectTrigger data-testid="select-restart-policy" className="bg-input border-border">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="unless-stopped">unless-stopped (recommended)</SelectItem>
+                              <SelectItem value="always">always</SelectItem>
+                              <SelectItem value="on-failure">on-failure</SelectItem>
+                              <SelectItem value="no">no</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Controls when containers automatically restart. Applies to all enabled services. 
+                            Memory limits are configured per-service above.
+                          </p>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </Card>
 
               {/* Service Configuration Cards */}

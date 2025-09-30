@@ -14,6 +14,10 @@ export function generateDockerCompose(config: ServiceConfig): string {
       retries: 3
       start_period: 40s` : '';
     
+    const customVolumes = config.searxng.customVolumes 
+      ? config.searxng.customVolumes.split('\n').filter(line => line.trim()).map(line => `      - ${line.trim()}`).join('\n')
+      : '';
+    
     services.push(`  searxng:
     image: searxng/searxng:latest
     container_name: librechat-searxng
@@ -24,8 +28,8 @@ export function generateDockerCompose(config: ServiceConfig): string {
     ports:
       - "${config.searxng.port}:8080"
     volumes:
-      - ./searxng:/etc/searxng:rw
-    restart: unless-stopped
+      - ./searxng:/etc/searxng:rw${customVolumes ? '\n' + customVolumes : ''}
+    restart: ${config.restartPolicy}
     networks:
       - librechat-search${healthCheck}
     deploy:
@@ -43,6 +47,10 @@ export function generateDockerCompose(config: ServiceConfig): string {
       retries: 3
       start_period: 40s` : '';
     
+    const customVolumes = config.jinaReader.customVolumes 
+      ? '\n' + config.jinaReader.customVolumes.split('\n').filter(line => line.trim()).map(line => `      - ${line.trim()}`).join('\n')
+      : '';
+    
     services.push(`  jina-reader:
     image: jinaai/reader:latest
     container_name: librechat-jina
@@ -50,8 +58,9 @@ export function generateDockerCompose(config: ServiceConfig): string {
       - READER_TIMEOUT=${config.jinaReader.timeout}
       - READER_MAX_PAGES=${config.jinaReader.maxPages}
     ports:
-      - "${config.jinaReader.port}:3000"
-    restart: unless-stopped
+      - "${config.jinaReader.port}:3000"${customVolumes ? `
+    volumes:${customVolumes}` : ''}
+    restart: ${config.restartPolicy}
     networks:
       - librechat-search${healthCheck}
     deploy:
@@ -69,6 +78,10 @@ export function generateDockerCompose(config: ServiceConfig): string {
       retries: 3
       start_period: 60s` : '';
     
+    const customVolumes = config.bgeReranker.customVolumes 
+      ? '\n' + config.bgeReranker.customVolumes.split('\n').filter(line => line.trim()).map(line => `      - ${line.trim()}`).join('\n')
+      : '';
+    
     services.push(`  bge-reranker:
     image: bge/reranker-v2-m3:latest
     container_name: librechat-reranker
@@ -76,8 +89,9 @@ export function generateDockerCompose(config: ServiceConfig): string {
       - MODEL_NAME=${config.bgeReranker.modelType}
       - MAX_BATCH_SIZE=${config.bgeReranker.maxBatchSize}
     ports:
-      - "${config.bgeReranker.port}:8787"
-    restart: unless-stopped
+      - "${config.bgeReranker.port}:8787"${customVolumes ? `
+    volumes:${customVolumes}` : ''}
+    restart: ${config.restartPolicy}
     networks:
       - librechat-search${healthCheck}
     deploy:
