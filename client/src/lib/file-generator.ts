@@ -249,6 +249,32 @@ fi
 echo ""
 echo "🎉 Installation complete! Your LibreChat Search Stack is ready!"
 echo ""
+
+# Run Python tests
+echo "🧪 Running service tests..."
+echo ""
+if command -v python3 &> /dev/null; then
+    # Make the test script executable
+    chmod +x test_services.py
+    
+    # Run the tests
+    python3 test_services.py
+    TEST_EXIT_CODE=$?
+    
+    if [ $TEST_EXIT_CODE -eq 0 ]; then
+        echo ""
+        echo "✅ All service tests passed!"
+    else
+        echo ""
+        echo "⚠️  Some tests failed. Services may still be starting up."
+        echo "   You can run 'python3 test_services.py' again to retest."
+    fi
+else
+    echo "⚠️  Python 3 not found. Skipping automatic tests."
+    echo "   Install Python 3 and run 'python3 test_services.py' to test services."
+fi
+
+echo ""
 echo "💡 Next steps:"
 echo "   1. Add these environment variables to your LibreChat .env file:"${config.searxng.enabled ? `
 echo "      SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}"
@@ -258,6 +284,7 @@ echo "      FIRECRAWL_API_KEY=${config.jinaReader.apiKey}"` : ''}${config.bgeRer
 echo "      RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}"
 echo "      JINA_API_KEY=${config.bgeReranker.apiKey}"` : ''}
 echo "   2. Restart LibreChat to apply the changes"
+echo "   3. Run 'python3 test_services.py' anytime to test your services"
 echo ""
 echo "🔑 API Keys: These are fixed default keys for testing in closed environments."
 echo ""
