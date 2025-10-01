@@ -416,9 +416,12 @@ export function generateTestScript(config: ServiceConfig): string {
 LibreChat Search Stack - Service Tester
 This script tests the configured services to ensure they're running correctly.
 You can modify and reuse this script for further testing.
+No external dependencies required - uses Python standard library only.
 """
 
-import requests
+import urllib.request
+import urllib.parse
+import urllib.error
 import json
 import sys
 
@@ -430,39 +433,36 @@ def test_searxng():
     try:
         # Test query - feel free to modify this!
         query = "top 10 news for today"
-        url = "http://localhost:${config.searxng.port}/search"
+        params = urllib.parse.urlencode({"q": query, "format": "json"})
+        url = f"http://localhost:${config.searxng.port}/search?{params}"
         
-        response = requests.get(
-            url,
-            params={"q": query, "format": "json"},
-            timeout=10
-        )
-        
-        if response.status_code == 200:
-            data = response.json()
-            results = data.get('results', [])
+        with urllib.request.urlopen(url, timeout=10) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode('utf-8'))
+                results = data.get('results', [])
+                
+                print(f"✅ SearXNG is working!")
+                print(f"Query: '{query}'")
+                print(f"Found {len(results)} results\\n")
+                
+                # Display first 10 results
+                for i, result in enumerate(results[:10], 1):
+                    print(f"{i}. {result.get('title', 'No title')}")
+                    print(f"   URL: {result.get('url', 'No URL')}")
+                    if result.get('content'):
+                        content = result['content'][:100] + "..." if len(result.get('content', '')) > 100 else result.get('content', '')
+                        print(f"   {content}")
+                    print()
+                
+                return True
+            else:
+                print(f"❌ SearXNG returned status code: {response.status}")
+                return False
             
-            print(f"✅ SearXNG is working!")
-            print(f"Query: '{query}'")
-            print(f"Found {len(results)} results\\n")
-            
-            # Display first 10 results
-            for i, result in enumerate(results[:10], 1):
-                print(f"{i}. {result.get('title', 'No title')}")
-                print(f"   URL: {result.get('url', 'No URL')}")
-                if result.get('content'):
-                    content = result['content'][:100] + "..." if len(result.get('content', '')) > 100 else result.get('content', '')
-                    print(f"   {content}")
-                print()
-            
-            return True
-        else:
-            print(f"❌ SearXNG returned status code: {response.status_code}")
-            return False
-            
-    except requests.exceptions.ConnectionError:
+    except urllib.error.URLError as e:
         print("❌ Cannot connect to SearXNG")
         print(f"   Make sure it's running on http://localhost:${config.searxng.port}")
+        print(f"   Error: {e.reason}")
         return False
     except Exception as e:
         print(f"❌ Error testing SearXNG: {e}")
@@ -475,17 +475,17 @@ def test_jina_reader():
     
     try:
         url = "http://localhost:${config.jinaReader.port}/health"
-        response = requests.get(url, timeout=5)
         
-        if response.status_code == 200:
-            print("✅ Jina AI Reader is running!")
-            print(f"   Service available at http://localhost:${config.jinaReader.port}")
-            return True
-        else:
-            print(f"❌ Jina AI Reader returned status code: {response.status_code}")
-            return False
+        with urllib.request.urlopen(url, timeout=5) as response:
+            if response.status == 200:
+                print("✅ Jina AI Reader is running!")
+                print(f"   Service available at http://localhost:${config.jinaReader.port}")
+                return True
+            else:
+                print(f"❌ Jina AI Reader returned status code: {response.status}")
+                return False
             
-    except requests.exceptions.ConnectionError:
+    except urllib.error.URLError as e:
         print("❌ Cannot connect to Jina AI Reader")
         print(f"   Make sure it's running on http://localhost:${config.jinaReader.port}")
         return False
@@ -500,17 +500,17 @@ def test_bge_reranker():
     
     try:
         url = "http://localhost:${config.bgeReranker.port}/health"
-        response = requests.get(url, timeout=5)
         
-        if response.status_code == 200:
-            print("✅ BGE Reranker is running!")
-            print(f"   Service available at http://localhost:${config.bgeReranker.port}")
-            return True
-        else:
-            print(f"❌ BGE Reranker returned status code: {response.status_code}")
-            return False
+        with urllib.request.urlopen(url, timeout=5) as response:
+            if response.status == 200:
+                print("✅ BGE Reranker is running!")
+                print(f"   Service available at http://localhost:${config.bgeReranker.port}")
+                return True
+            else:
+                print(f"❌ BGE Reranker returned status code: {response.status}")
+                return False
             
-    except requests.exceptions.ConnectionError:
+    except urllib.error.URLError as e:
         print("❌ Cannot connect to BGE Reranker")
         print(f"   Make sure it's running on http://localhost:${config.bgeReranker.port}")
         return False
