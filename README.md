@@ -3,6 +3,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://librechatlocalwebsearchstack.netlify.app/)
+
+**🌐 Try it now: [https://librechatlocalwebsearchstack.netlify.app/](https://librechatlocalwebsearchstack.netlify.app/)**
 
 ## 🔗 Works With LibreChatConfigurator
 
@@ -48,15 +51,17 @@ Generate Search Stack → Import JSON Config → Configure LibreChat → Deploy 
 
 **This tool generates Docker infrastructure packages. It doesn't run Docker itself - the generated files work on your local machine or server.**
 
-### 🌐 Use Online (Limited Features)
+### 🌐 Use Online (Full Features)
 
-**[Launch Search Stack Generator](#)** _(Coming soon - Netlify deployment)_
+**[Launch Search Stack Generator](https://librechatlocalwebsearchstack.netlify.app/)** 
 
 - ✅ Configure all search service settings
-- ✅ Download individual files (docker-compose.yml, .env.example, README.md)
-- ❌ **ZIP package generation will fail** - no backend on static hosting
+- ✅ Preview all generated files in real-time
+- ✅ Download complete ZIP package with all configuration files
+- ✅ Export JSON configuration for LibreChatConfigurator
+- ✅ No installation required - runs entirely in your browser
 
-### 💻 Run Locally (Full Features - Recommended)
+### 💻 Run Locally (Alternative)
 
 **Prerequisites:** Node.js 20+ is required
 
