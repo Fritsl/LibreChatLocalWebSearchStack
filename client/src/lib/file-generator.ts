@@ -481,7 +481,14 @@ def test_searxng():
         params = urllib.parse.urlencode({"q": query, "format": "json"})
         url = f"http://localhost:${config.searxng.port}/search?{params}"
         
-        with urllib.request.urlopen(url, timeout=10) as response:
+        # SearXNG requires X-Forwarded-For header for bot detection
+        headers = {
+            'X-Forwarded-For': '127.0.0.1',
+            'User-Agent': 'LibreChat-SearchStack-Test/1.0'
+        }
+        
+        request = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(request, timeout=10) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode('utf-8'))
                 results = data.get('results', [])
@@ -504,6 +511,12 @@ def test_searxng():
                 print(f"❌ SearXNG returned status code: {response.status}")
                 return False
             
+    except urllib.error.HTTPError as e:
+        print(f"❌ SearXNG returned error {e.code}: {e.reason}")
+        print(f"   Make sure it's running on http://localhost:${config.searxng.port}")
+        if e.code == 403:
+            print("   Note: Check SearXNG settings if 403 Forbidden error persists")
+        return False
     except urllib.error.URLError as e:
         print("❌ Cannot connect to SearXNG")
         print(f"   Make sure it's running on http://localhost:${config.searxng.port}")
@@ -520,8 +533,9 @@ def test_jina_reader():
     
     try:
         url = "http://localhost:${config.jinaReader.port}/health"
+        request = urllib.request.Request(url)
         
-        with urllib.request.urlopen(url, timeout=5) as response:
+        with urllib.request.urlopen(request, timeout=5) as response:
             if response.status == 200:
                 print("✅ Jina AI Reader is running!")
                 print(f"   Service available at http://localhost:${config.jinaReader.port}")
@@ -530,9 +544,14 @@ def test_jina_reader():
                 print(f"❌ Jina AI Reader returned status code: {response.status}")
                 return False
             
+    except urllib.error.HTTPError as e:
+        print(f"❌ Jina AI Reader returned error {e.code}: {e.reason}")
+        print(f"   Make sure it's running on http://localhost:${config.jinaReader.port}")
+        return False
     except urllib.error.URLError as e:
         print("❌ Cannot connect to Jina AI Reader")
         print(f"   Make sure it's running on http://localhost:${config.jinaReader.port}")
+        print(f"   Error: {e.reason}")
         return False
     except Exception as e:
         print(f"❌ Error testing Jina AI Reader: {e}")
@@ -545,8 +564,9 @@ def test_bge_reranker():
     
     try:
         url = "http://localhost:${config.bgeReranker.port}/health"
+        request = urllib.request.Request(url)
         
-        with urllib.request.urlopen(url, timeout=5) as response:
+        with urllib.request.urlopen(request, timeout=5) as response:
             if response.status == 200:
                 print("✅ BGE Reranker is running!")
                 print(f"   Service available at http://localhost:${config.bgeReranker.port}")
@@ -555,9 +575,14 @@ def test_bge_reranker():
                 print(f"❌ BGE Reranker returned status code: {response.status}")
                 return False
             
+    except urllib.error.HTTPError as e:
+        print(f"❌ BGE Reranker returned error {e.code}: {e.reason}")
+        print(f"   Make sure it's running on http://localhost:${config.bgeReranker.port}")
+        return False
     except urllib.error.URLError as e:
         print("❌ Cannot connect to BGE Reranker")
         print(f"   Make sure it's running on http://localhost:${config.bgeReranker.port}")
+        print(f"   Error: {e.reason}")
         return False
     except Exception as e:
         print(f"❌ Error testing BGE Reranker: {e}")
