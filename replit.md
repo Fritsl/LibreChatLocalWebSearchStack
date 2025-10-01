@@ -34,6 +34,7 @@ Preferred communication style: Simple, everyday language.
 - No global state management needed (simple configuration form)
 - Configuration state managed in the Home component
 - Form data validated using Zod schemas
+- Default preset: Development (all services enabled with lower resources)
 
 **Routing**: Wouter (lightweight client-side routing)
 - Minimal routing needs (home page + 404)

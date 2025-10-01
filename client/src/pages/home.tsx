@@ -14,9 +14,11 @@ import { configPresets } from "@/lib/presets";
 import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson } from "lucide-react";
 
 export default function Home() {
-  const [config, setConfig] = useState<ServiceConfig>(serviceConfigSchema.parse({}));
+  const [config, setConfig] = useState<ServiceConfig>(
+    configPresets.find(p => p.id === 'development')?.config || serviceConfigSchema.parse({})
+  );
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [selectedPreset, setSelectedPreset] = useState('custom');
+  const [selectedPreset, setSelectedPreset] = useState('development');
 
   const handleConfigChange = (updates: Partial<ServiceConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }));
