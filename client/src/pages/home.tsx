@@ -12,6 +12,7 @@ import { downloadConfigPackage, downloadJsonConfig } from "@/lib/file-generator"
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
 import { configPresets } from "@/lib/presets";
 import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const [config, setConfig] = useState<ServiceConfig>(
@@ -19,6 +20,7 @@ export default function Home() {
   );
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [selectedPreset, setSelectedPreset] = useState('development');
+  const { toast } = useToast();
 
   const handleConfigChange = (updates: Partial<ServiceConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }));
@@ -35,17 +37,47 @@ export default function Home() {
 
   const handleGenerate = async () => {
     try {
+      const result = serviceConfigSchema.safeParse(config);
+      if (!result.success) {
+        const errors = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
       await downloadConfigPackage(config);
     } catch (error) {
       console.error('Failed to generate package:', error);
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
     }
   };
 
   const handleExportJson = () => {
     try {
+      const result = serviceConfigSchema.safeParse(config);
+      if (!result.success) {
+        const errors = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        toast({
+          title: "Validation Error",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
       downloadJsonConfig(config);
     } catch (error) {
       console.error('Failed to export JSON config:', error);
+      toast({
+        title: "Export Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
     }
   };
 
