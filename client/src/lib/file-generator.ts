@@ -31,7 +31,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
       - ./searxng:/etc/searxng:rw${customVolumes ? '\n' + customVolumes : ''}
     restart: ${config.restartPolicy}
     networks:
-      - librechat-search${healthCheck}
+      - ${config.networkName}${healthCheck}
     deploy:
       resources:
         limits:
@@ -62,7 +62,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
     volumes:${customVolumes}` : ''}
     restart: ${config.restartPolicy}
     networks:
-      - librechat-search${healthCheck}
+      - ${config.networkName}${healthCheck}
     deploy:
       resources:
         limits:
@@ -93,7 +93,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
     volumes:${customVolumes}` : ''}
     restart: ${config.restartPolicy}
     networks:
-      - librechat-search${healthCheck}
+      - ${config.networkName}${healthCheck}
     deploy:
       resources:
         limits:
@@ -104,8 +104,8 @@ export function generateDockerCompose(config: ServiceConfig): string {
 ${services.join('\n\n')}
 
 networks:
-  librechat-search:
-    driver: bridge`;
+  ${config.networkName}:
+    external: true`;
 }
 
 export function generateEnvFile(config: ServiceConfig): string {
