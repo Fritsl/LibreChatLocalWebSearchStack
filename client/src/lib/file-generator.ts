@@ -379,6 +379,41 @@ docker compose pull
 docker compose up -d
 \`\`\`
 
+## Troubleshooting
+
+### Expected SearXNG Warnings
+
+When starting SearXNG, you may see these warnings in the logs. **These are normal and do not affect functionality:**
+
+\`\`\`
+WARNING:searx.data: TRACKER_PATTERNS: HTTPError occurred while fetching
+ERROR:searx.engines: Missing engine config attribute: "yacy images.base_url"
+WARNING:searx.search.processors: Engine of name 'ahmia' does not exists.
+WARNING:searx.search.processors: Engine of name 'torch' does not exists.
+WARNING:searx.botdetection.config: missing config file: /etc/searxng/limiter.toml
+\`\`\`
+
+**What these mean:**
+- TRACKER_PATTERNS warnings: External tracker blocking lists temporarily unavailable
+- Missing engine errors: Optional search engines not configured (not needed for basic functionality)
+- Missing limiter.toml: Rate limiting config not required for private instances
+
+**SearXNG is working correctly if you see:**
+\`\`\`
+[INFO] Started worker-1
+[INFO] Listening at: http://:::${config.searxng.port}
+\`\`\`
+
+### Testing Your Services
+
+Run the included test script to verify everything is working:
+
+\`\`\`bash
+python3 test_services.py
+\`\`\`
+
+This will perform actual searches and API calls to confirm your services are responding correctly.
+
 ## Support
 
 For issues related to:
