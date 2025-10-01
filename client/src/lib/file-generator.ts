@@ -383,6 +383,155 @@ export function generateJsonConfig(config: ServiceConfig): string {
   return JSON.stringify(jsonConfig, null, 2);
 }
 
+export function generateTestScript(config: ServiceConfig): string {
+  return `#!/usr/bin/env python3
+"""
+LibreChat Search Stack - Service Tester
+This script tests the configured services to ensure they're running correctly.
+You can modify and reuse this script for further testing.
+"""
+
+import requests
+import json
+import sys
+
+def test_searxng():
+    """Test SearXNG search functionality"""
+    print("\\n🔍 Testing SearXNG Search...")
+    print("=" * 60)
+    
+    try:
+        # Test query - feel free to modify this!
+        query = "top 10 news for today"
+        url = "http://localhost:${config.searxng.port}/search"
+        
+        response = requests.get(
+            url,
+            params={"q": query, "format": "json"},
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get('results', [])
+            
+            print(f"✅ SearXNG is working!")
+            print(f"Query: '{query}'")
+            print(f"Found {len(results)} results\\n")
+            
+            # Display first 10 results
+            for i, result in enumerate(results[:10], 1):
+                print(f"{i}. {result.get('title', 'No title')}")
+                print(f"   URL: {result.get('url', 'No URL')}")
+                if result.get('content'):
+                    content = result['content'][:100] + "..." if len(result.get('content', '')) > 100 else result.get('content', '')
+                    print(f"   {content}")
+                print()
+            
+            return True
+        else:
+            print(f"❌ SearXNG returned status code: {response.status_code}")
+            return False
+            
+    except requests.exceptions.ConnectionError:
+        print("❌ Cannot connect to SearXNG")
+        print(f"   Make sure it's running on http://localhost:${config.searxng.port}")
+        return False
+    except Exception as e:
+        print(f"❌ Error testing SearXNG: {e}")
+        return False
+
+def test_jina_reader():
+    """Test Jina AI Reader functionality"""
+    print("\\n📄 Testing Jina AI Reader...")
+    print("=" * 60)
+    
+    try:
+        url = "http://localhost:${config.jinaReader.port}/health"
+        response = requests.get(url, timeout=5)
+        
+        if response.status_code == 200:
+            print("✅ Jina AI Reader is running!")
+            print(f"   Service available at http://localhost:${config.jinaReader.port}")
+            return True
+        else:
+            print(f"❌ Jina AI Reader returned status code: {response.status_code}")
+            return False
+            
+    except requests.exceptions.ConnectionError:
+        print("❌ Cannot connect to Jina AI Reader")
+        print(f"   Make sure it's running on http://localhost:${config.jinaReader.port}")
+        return False
+    except Exception as e:
+        print(f"❌ Error testing Jina AI Reader: {e}")
+        return False
+
+def test_bge_reranker():
+    """Test BGE Reranker functionality"""
+    print("\\n📊 Testing BGE Reranker...")
+    print("=" * 60)
+    
+    try:
+        url = "http://localhost:${config.bgeReranker.port}/health"
+        response = requests.get(url, timeout=5)
+        
+        if response.status_code == 200:
+            print("✅ BGE Reranker is running!")
+            print(f"   Service available at http://localhost:${config.bgeReranker.port}")
+            return True
+        else:
+            print(f"❌ BGE Reranker returned status code: {response.status_code}")
+            return False
+            
+    except requests.exceptions.ConnectionError:
+        print("❌ Cannot connect to BGE Reranker")
+        print(f"   Make sure it's running on http://localhost:${config.bgeReranker.port}")
+        return False
+    except Exception as e:
+        print(f"❌ Error testing BGE Reranker: {e}")
+        return False
+
+def main():
+    print("\\n" + "=" * 60)
+    print("LibreChat Search Stack - Service Tests")
+    print("=" * 60)
+    
+    results = {}
+    
+    # Test enabled services
+    ${config.searxng.enabled ? 'results["searxng"] = test_searxng()' : ''}
+    ${config.jinaReader.enabled ? 'results["jinaReader"] = test_jina_reader()' : ''}
+    ${config.bgeReranker.enabled ? 'results["bgeReranker"] = test_bge_reranker()' : ''}
+    
+    # Summary
+    print("\\n" + "=" * 60)
+    print("Test Summary")
+    print("=" * 60)
+    
+    all_passed = all(results.values()) if results else False
+    
+    for service, passed in results.items():
+        status = "✅ PASS" if passed else "❌ FAIL"
+        print(f"{service:20} {status}")
+    
+    print("=" * 60)
+    
+    if all_passed:
+        print("\\n🎉 All tests passed! Your services are ready to use.")
+        sys.exit(0)
+    else:
+        print("\\n⚠️  Some tests failed. Check the output above for details.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\\n\\nTests cancelled by user.")
+        sys.exit(1)
+`;
+}
+
 export function downloadJsonConfig(config: ServiceConfig): void {
   const jsonContent = generateJsonConfig(config);
   const blob = new Blob([jsonContent], { type: 'application/json' });
@@ -397,6 +546,7 @@ export async function downloadConfigPackage(config: ServiceConfig): Promise<void
   zip.file('README.md', generateReadme(config));
   zip.file('install_dockerimage.sh', generateInstallScript(config));
   zip.file('search-stack-config.json', generateJsonConfig(config));
+  zip.file('test_services.py', generateTestScript(config));
   
   const content = await zip.generateAsync({ type: 'blob' });
   saveAs(content, 'librechat-search-stack.zip');
