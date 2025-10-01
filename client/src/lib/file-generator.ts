@@ -146,10 +146,15 @@ RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}
 export function generateInstallScript(config: ServiceConfig): string {
   const enabledServices = [];
   const servicePorts: string[] = [];
+  const directories: string[] = [];
   
   if (config.searxng.enabled) {
     enabledServices.push("SearXNG");
     servicePorts.push(`   - SearXNG: http://localhost:${config.searxng.port}`);
+    directories.push('searxng');
+  }
+  if (config.jinaReader.enabled || config.bgeReranker.enabled) {
+    directories.push('cache');
   }
   if (config.jinaReader.enabled) {
     enabledServices.push("Jina AI Reader");
@@ -160,14 +165,18 @@ export function generateInstallScript(config: ServiceConfig): string {
     servicePorts.push(`   - BGE Reranker: http://localhost:${config.bgeReranker.port}`);
   }
 
-  return `#!/bin/bash
+  return `#!/usr/bin/env bash
 
 # =============================================================================
 # LibreChat Search Stack Installation Script
 # Generated Configuration for ${enabledServices.join(", ")}
 # =============================================================================
 
-set -e
+# Exit on error, undefined variables, and pipe failures
+set -Eeuo pipefail
+
+# Always run from script directory
+cd "$(dirname "$0")"
 
 echo "🚀 Starting LibreChat Search Stack installation..."
 
@@ -187,12 +196,18 @@ fi
 
 echo "✅ Docker and Docker Compose are installed"
 
-# Create necessary directories
+# Create necessary directories (safely handle existing files/dirs)
 echo "📁 Creating directories..."
-${config.searxng.enabled ? 'mkdir -p searxng' : ''}${config.jinaReader.enabled || config.bgeReranker.enabled ? '\nmkdir -p cache' : ''}
-
-# Set permissions
-${config.searxng.enabled ? 'chmod 755 searxng' : ''}${config.jinaReader.enabled || config.bgeReranker.enabled ? '\nchmod 755 cache' : ''}
+${directories.length > 0 ? `
+for dir in ${directories.join(' ')}; do
+    if [ -e "$dir" ] && [ ! -d "$dir" ]; then
+        echo "❌ Error: '$dir' exists but is not a directory"
+        exit 1
+    fi
+    mkdir -p "$dir"
+    chmod 755 "$dir"
+done
+` : '# No directories needed'}
 
 # Pull Docker images
 echo "📦 Pulling Docker images..."

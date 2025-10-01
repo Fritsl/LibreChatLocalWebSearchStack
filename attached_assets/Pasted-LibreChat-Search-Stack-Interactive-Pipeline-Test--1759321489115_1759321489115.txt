@@ -1,0 +1,107 @@
+LibreChat Search Stack - Interactive Pipeline Test
+================================================================================
+
+This will test the complete search pipeline:
+  1. 🔍 Search with SearXNG
+  2. 📄 Crawl content with Jina Reader
+  3. 📊 Rerank results with BGE Reranker
+
+What would you like to search for? Frits
+
+🔍 Searching for: 'Frits'
+================================================================================
+❌ Error searching: HTTP Error 403: Forbidden
+
+❌ Search failed. Make sure SearXNG is running.
+PS C:\Users\frits\Downloads\librechat-search-stack> docker compose logs searxng
+librechat-searxng  | SearXNG 2025.10.1-06e4f4f75
+librechat-searxng  | ...
+librechat-searxng  | ... INFORMATION
+librechat-searxng  | ... "/etc/searxng/settings.yml" does not exist, creating from template...
+librechat-searxng  | ...
+librechat-searxng  | [INFO] Starting granian (main PID: 1)
+librechat-searxng  | [INFO] Listening at: http://:::8080
+librechat-searxng  | [INFO] Spawning worker-1 with PID: 21
+librechat-searxng  | 2025-10-01 11:27:17,158 ERROR:searx.engines: Missing engine config attribute: "yacy images.base_url"
+librechat-searxng  | 2025-10-01 11:27:17,188 WARNING:searx.search.processors: Engine of name 'ahmia' does not exists.
+librechat-searxng  | 2025-10-01 11:27:17,206 WARNING:searx.search.processors: Engine of name 'torch' does not exists.
+librechat-searxng  | 2025-10-01 11:27:17,210 WARNING:searx.search.processors: Engine of name 'yacy images' does not exists.
+librechat-searxng  | 2025-10-01 11:27:17,217 WARNING:searx.botdetection.config: missing config file: /etc/searxng/limiter.toml
+librechat-searxng  | [INFO] Started worker-1
+librechat-searxng  | [INFO] Started worker-1 runtime-1
+librechat-searxng  | 2025-10-01 11:27:41,980 ERROR:searx.botdetection: X-Forwarded-For nor X-Real-IP header is set!
+librechat-searxng  | /usr/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=21) is multi-threaded, use of fork() may lead to deadlocks in the child.
+librechat-searxng  |   self.pid = os.fork()
+librechat-searxng  | 2025-10-01 12:18:06,658 WARNING:searx.engines.pinterest: ErrorContext('searx/engines/pinterest.py', 46, "'engine_data': json_resp['resource_response']['bookmark'],", 'KeyError', None, ()) False
+librechat-searxng  | 2025-10-01 12:18:06,659 ERROR:searx.engines.pinterest: exception : 'bookmark'
+librechat-searxng  | Traceback (most recent call last):
+librechat-searxng  |   File "/usr/local/searxng/searx/search/processors/online.py", line 249, in search
+librechat-searxng  |     search_results = self._search_basic(query, params)
+librechat-searxng  |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/local/searxng/searx/search/processors/online.py", line 235, in _search_basic
+librechat-searxng  |     return self.engine.response(response)
+librechat-searxng  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/local/searxng/searx/engines/pinterest.py", line 46, in response
+librechat-searxng  |     'engine_data': json_resp['resource_response']['bookmark'],
+librechat-searxng  |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+librechat-searxng  | KeyError: 'bookmark'
+librechat-searxng  | 2025-10-01 12:18:06,664 WARNING:searx.engines.brave.images: ErrorContext('searx/engines/brave.py', 268, 'json_data = js_variable_to_python(js_object)', 'json.decoder.JSONDecodeError', None, ('Expecting property name enclosed in double quotes',)) False
+librechat-searxng  | 2025-10-01 12:18:06,664 ERROR:searx.engines.brave.images: exception : Expecting property name enclosed in double quotes: line 1 column 134759 (char 134758)
+librechat-searxng  | Traceback (most recent call last):
+librechat-searxng  |   File "/usr/local/searxng/searx/search/processors/online.py", line 249, in search
+librechat-searxng  |     search_results = self._search_basic(query, params)
+librechat-searxng  |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/local/searxng/searx/search/processors/online.py", line 235, in _search_basic
+librechat-searxng  |     return self.engine.response(response)
+librechat-searxng  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/local/searxng/searx/engines/brave.py", line 268, in response
+librechat-searxng  |     json_data = js_variable_to_python(js_object)
+librechat-searxng  |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/local/searxng/searx/utils.py", line 816, in js_variable_to_python
+librechat-searxng  |     return json.loads(s)  # pyright: ignore[reportAny]
+librechat-searxng  |            ^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+librechat-searxng  |     return _default_decoder.decode(s)
+librechat-searxng  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/lib/python3.12/json/decoder.py", line 338, in decode
+librechat-searxng  |     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+librechat-searxng  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  |   File "/usr/lib/python3.12/json/decoder.py", line 354, in raw_decode
+librechat-searxng  |     obj, end = self.scan_once(s, idx)
+librechat-searxng  |                ^^^^^^^^^^^^^^^^^^^^^^
+librechat-searxng  | json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 134759 (char 134758)
+librechat-searxng  | 2025-10-01 12:18:09,269 ERROR:searx.engines.artic: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,269 ERROR:searx.engines.bing images: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,269 ERROR:searx.engines.openverse: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,270 ERROR:searx.engines.flickr: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,270 ERROR:searx.engines.google images: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,271 ERROR:searx.engines.qwant images: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,271 ERROR:searx.engines.startpage images: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,272 ERROR:searx.engines.unsplash: engine timeout
+librechat-searxng  | 2025-10-01 12:18:09,272 ERROR:searx.engines.wikicommons.images: engine timeout
+librechat-searxng  | /usr/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=21) is multi-threaded, use of fork() may lead to deadlocks in the child.
+librechat-searxng  |   self.pid = os.fork()
+librechat-searxng  | 2025-10-01 12:18:11,230 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:14,151 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:14,478 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:17,960 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:19,377 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:20,006 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:21,541 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:21,633 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | 2025-10-01 12:18:21,773 ERROR:searx: call to ResultContainer.add_timing after ResultContainer.close
+librechat-searxng  | [INFO] Shutting down granian
+librechat-searxng  | [INFO] Stopping worker-1 runtime-1
+librechat-searxng  | [INFO] Stopping worker-1
+librechat-searxng  | SearXNG 2025.10.1-06e4f4f75
+librechat-searxng  | [INFO] Starting granian (main PID: 1)
+librechat-searxng  | [INFO] Listening at: http://:::8080
+librechat-searxng  | [INFO] Spawning worker-1 with PID: 17
+librechat-searxng  | 2025-10-01 12:23:24,846 ERROR:searx.engines: Missing engine config attribute: "yacy images.base_url"
+librechat-searxng  | 2025-10-01 12:23:24,891 WARNING:searx.search.processors: Engine of name 'ahmia' does not exists.
+librechat-searxng  | 2025-10-01 12:23:24,909 WARNING:searx.search.processors: Engine of name 'torch' does not exists.
+librechat-searxng  | 2025-10-01 12:23:24,917 WARNING:searx.search.processors: Engine of name 'yacy images' does not exists.
+librechat-searxng  | 2025-10-01 12:23:24,926 WARNING:searx.botdetection.config: missing config file: /etc/searxng/limiter.toml
+librechat-searxng  | [INFO] Started worker-1
+librechat-searxng  | [INFO] Started worker-1 runtime-1
+PS C:\Users\frits\Downloads\librechat-search-stack>
