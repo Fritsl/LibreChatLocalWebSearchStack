@@ -196,6 +196,16 @@ fi
 
 echo "✅ Docker and Docker Compose are installed"
 
+# Create Docker network if it doesn't exist
+NETWORK="${config.networkName}"
+echo "🌐 Setting up Docker network: $NETWORK"
+if docker network inspect "$NETWORK" >/dev/null 2>&1; then
+    echo "✅ Network '$NETWORK' already exists"
+else
+    docker network create "$NETWORK"
+    echo "✅ Created network '$NETWORK'"
+fi
+
 # Create necessary directories (safely handle existing files/dirs)
 echo "📁 Creating directories..."
 ${directories.length > 0 ? `
