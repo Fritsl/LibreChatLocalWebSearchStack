@@ -77,17 +77,31 @@ Preferred communication style: Simple, everyday language.
 - `client/src/lib/file-generator.ts` contains core generation logic
 - JSZip library creates downloadable .zip packages
 - FileSaver.js handles browser downloads
-- Five generated files:
+- Six generated files:
   - `docker-compose.yml`: Service definitions with ports, environment, resource limits
   - `.env.example`: Template environment variables
   - `README.md`: Setup instructions and documentation
-  - `install_dockerimage.sh`: One-click bash installation script
+  - `install_dockerimage.sh`: One-click bash installation script with automatic testing
   - `search-stack-config.json`: LibreChat-compatible JSON configuration (auto-included in ZIP, can also be exported separately)
+  - `test_services.py`: Python script for testing services (uses standard library only, no external dependencies)
 
 **Configuration Schema**: 
 - Shared Zod schemas (`shared/schema.ts`) validate service configurations
 - Type safety between form inputs and file generation
 - Default values defined in schema
+
+**Service Testing System**:
+- Python-based testing script (`test_services.py`) included in generated packages
+- Uses only Python standard library (urllib, json) - no external dependencies required
+- Automatically executed by installation script after Docker containers start
+- Tests performed:
+  - **SearXNG**: Performs actual search query ("top 10 news for today") and displays results
+  - **Jina AI Reader**: Health check endpoint validation
+  - **BGE Reranker**: Health check endpoint validation
+- Only tests enabled services based on user configuration
+- Editable by users for custom testing scenarios
+- Reports pass/fail status with helpful error messages
+- Can be run anytime with `python3 test_services.py`
 
 ### External Dependencies
 
