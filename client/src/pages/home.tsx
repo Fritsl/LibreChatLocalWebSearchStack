@@ -6,13 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ServiceCard } from "@/components/service-card";
 import { PreviewPanel } from "@/components/preview-panel";
 import { downloadConfigPackage, downloadJsonConfig } from "@/lib/file-generator";
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
 import { configPresets } from "@/lib/presets";
-import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson } from "lucide-react";
+import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson, Info, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getVersionInfo } from "@shared/version";
 
 export default function Home() {
   const [config, setConfig] = useState<ServiceConfig>(
@@ -103,6 +105,89 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center space-x-3">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      data-testid="button-about"
+                      className="hover:bg-accent"
+                    >
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>About LibreChat Search Stack Generator</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 text-sm">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-muted-foreground">Tool Version</span>
+                          <span className="font-mono">{getVersionInfo().toolVersion}</span>
+                        </div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-muted-foreground">LibreChat Support</span>
+                          <span className="font-mono">{getVersionInfo().librechatTarget}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-muted-foreground">Last Updated</span>
+                          <span>{getVersionInfo().lastUpdated}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="border-t pt-3">
+                        <h4 className="font-medium mb-2">What's New</h4>
+                        <p className="text-muted-foreground">{getVersionInfo().changelog}</p>
+                      </div>
+
+                      <div className="border-t pt-3">
+                        <h4 className="font-medium mb-2">Docker Services</h4>
+                        <ul className="space-y-1 text-muted-foreground">
+                          <li>• SearXNG (Search Provider)</li>
+                          <li>• Jina Reader (Web Scraper)</li>
+                          <li>• BGE Reranker v2-m3 (Result Ranking)</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-t pt-3 space-y-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          asChild
+                        >
+                          <a
+                            href="https://github.com/Fritsl/LibreChatConfigurator"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2"
+                          >
+                            <Github className="h-4 w-4" />
+                            LibreChatConfigurator (Main Tool)
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          asChild
+                        >
+                          <a
+                            href="https://www.librechat.ai/docs/features/web_search"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2"
+                          >
+                            LibreChat Docs
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
                 <Button
                   variant="ghost"
                   size="icon"
