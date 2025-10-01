@@ -391,28 +391,31 @@ docker compose up -d
 
 ## Troubleshooting
 
-### Expected SearXNG Warnings
+### Expected SearXNG Docker Logs
 
-When starting SearXNG, you may see these warnings in the logs. **These are normal and do not affect functionality:**
+When starting SearXNG, you will see these messages in \`docker compose logs\`. **These are completely normal and do not affect functionality:**
 
 \`\`\`
-WARNING:searx.data: TRACKER_PATTERNS: HTTPError occurred while fetching
 ERROR:searx.engines: Missing engine config attribute: "yacy images.base_url"
 WARNING:searx.search.processors: Engine of name 'ahmia' does not exists.
 WARNING:searx.search.processors: Engine of name 'torch' does not exists.
+WARNING:searx.search.processors: Engine of name 'yacy images' does not exists.
 WARNING:searx.botdetection.config: missing config file: /etc/searxng/limiter.toml
+ERROR:searx.botdetection: X-Forwarded-For nor X-Real-IP header is set!
 \`\`\`
 
 **What these mean:**
-- TRACKER_PATTERNS warnings: External tracker blocking lists temporarily unavailable
-- Missing engine errors: Optional search engines not configured (not needed for basic functionality)
-- Missing limiter.toml: Rate limiting config not required for private instances
+- **Missing engine errors** (ahmia, torch, yacy images): Optional search engines not configured by default. SearXNG still works perfectly with Google, Bing, DuckDuckGo, and 20+ other engines.
+- **Missing limiter.toml**: Optional rate limiting config. Only needed for public-facing instances, not required for LibreChat's private use.
+- **X-Forwarded-For error**: Appears when requests don't include forwarding headers. The included test script handles this correctly, so you can ignore this warning.
 
-**SearXNG is working correctly if you see:**
+**✅ SearXNG is working correctly if you see:**
 \`\`\`
 [INFO] Started worker-1
 [INFO] Listening at: http://:::${config.searxng.port}
 \`\`\`
+
+These warnings are logged for every SearXNG instance and can be safely ignored. Your search functionality will work perfectly!
 
 ### Testing Your Services
 
