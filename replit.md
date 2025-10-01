@@ -89,6 +89,13 @@ Preferred communication style: Simple, everyday language.
 
 **Note:** Both installation scripts (`install_dockerimage.sh` and `install_dockerimage.bat`) are kept synchronized with identical functionality. Any updates to one script must be mirrored in the other to maintain cross-platform compatibility.
 
+**Docker Networking Architecture**:
+- Services join a shared external Docker network (default: `librechat`, configurable via UI)
+- Network name must match the network LibreChat uses for container-to-container communication
+- Installation scripts automatically create the network if it doesn't exist
+- JSON export uses container DNS names (searxng:8080, jina-reader:3000, bge-reranker:8787) for LibreChat running in Docker
+- Test script and .env file use localhost URLs for host-based testing
+
 **Environment Variable Integration**:
 - Docker Compose uses `${VARIABLE}` syntax to reference all configuration from `.env` file
 - All ports, memory limits, timeouts, API keys are defined in `.env`
