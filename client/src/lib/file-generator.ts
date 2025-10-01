@@ -306,6 +306,154 @@ echo ""
 `;
 }
 
+export function generateWindowsInstallScript(config: ServiceConfig): string {
+  const enabledServices = [];
+  const servicePorts: string[] = [];
+  const directories: string[] = [];
+  
+  if (config.searxng.enabled) {
+    enabledServices.push("SearXNG");
+    servicePorts.push(`   - SearXNG: http://localhost:${config.searxng.port}`);
+    directories.push('searxng');
+  }
+  if (config.jinaReader.enabled || config.bgeReranker.enabled) {
+    directories.push('cache');
+  }
+  if (config.jinaReader.enabled) {
+    enabledServices.push("Jina AI Reader");
+    servicePorts.push(`   - Jina AI Reader: http://localhost:${config.jinaReader.port}`);
+  }
+  if (config.bgeReranker.enabled) {
+    enabledServices.push("BGE Reranker");
+    servicePorts.push(`   - BGE Reranker: http://localhost:${config.bgeReranker.port}`);
+  }
+
+  return `@echo off
+REM =============================================================================
+REM LibreChat Search Stack Installation Script (Windows)
+REM Generated Configuration for ${enabledServices.join(", ")}
+REM =============================================================================
+
+setlocal enabledelayedexpansion
+
+echo.
+echo 🚀 Starting LibreChat Search Stack installation...
+echo.
+
+REM Check if Docker is installed
+where docker >nul 2>nul
+if errorlevel 1 (
+    echo ❌ Docker is not installed. Please install Docker Desktop first.
+    echo Visit: https://docs.docker.com/desktop/install/windows-install/
+    pause
+    exit /b 1
+)
+
+REM Check if Docker Compose is available
+docker compose version >nul 2>nul
+if errorlevel 1 (
+    docker-compose version >nul 2>nul
+    if errorlevel 1 (
+        echo ❌ Docker Compose is not available. Please install or update Docker Desktop.
+        pause
+        exit /b 1
+    )
+    set COMPOSE_CMD=docker-compose
+) else (
+    set COMPOSE_CMD=docker compose
+)
+
+echo ✅ Docker and Docker Compose are installed
+echo.
+
+REM Create necessary directories
+echo 📁 Creating directories...
+${directories.map(dir => `if not exist "${dir}" mkdir "${dir}"`).join('\n')}
+echo.
+
+REM Pull Docker images
+echo 📦 Pulling Docker images...
+%COMPOSE_CMD% pull
+if errorlevel 1 (
+    echo ❌ Failed to pull Docker images
+    pause
+    exit /b 1
+)
+echo.
+
+REM Start services
+echo 🔄 Starting LibreChat Search Stack services...
+%COMPOSE_CMD% up -d
+if errorlevel 1 (
+    echo ❌ Failed to start services
+    pause
+    exit /b 1
+)
+echo.
+
+REM Wait for services to be ready
+echo ⏳ Waiting for services to start...
+timeout /t 30 /nobreak >nul
+echo.
+
+REM Check if services are running
+echo 🔍 Checking service health...
+%COMPOSE_CMD% ps
+echo.
+
+echo ✅ LibreChat Search Stack is running successfully!
+echo.
+echo 🌐 Access your services at:
+${servicePorts.map(port => `echo ${port}`).join('\n')}
+echo.
+echo 📝 Useful commands:
+echo    View logs: docker compose logs -f (or docker-compose logs -f)
+echo    Stop services: docker compose down (or docker-compose down)
+echo    Restart services: docker compose restart (or docker-compose restart)
+echo    Update services: docker compose pull ^&^& docker compose up -d
+echo.
+
+echo 🎉 Installation complete! Your LibreChat Search Stack is ready!
+echo.
+
+REM Run Python tests
+echo 🧪 Running service tests...
+echo.
+where python >nul 2>nul
+if errorlevel 1 (
+    echo ⚠️  Python not found. Skipping automatic tests.
+    echo    Install Python and run 'python test_services.py' to test services.
+) else (
+    python test_services.py
+    if errorlevel 1 (
+        echo.
+        echo ⚠️  Some tests failed. Services may still be starting up.
+        echo    You can run 'python test_services.py' again to retest.
+    ) else (
+        echo.
+        echo ✅ All service tests passed!
+    )
+)
+
+echo.
+echo 💡 Next steps:
+echo    1. Add these environment variables to your LibreChat .env file:${config.searxng.enabled ? `
+echo       SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}
+echo       SEARXNG_API_KEY=${config.searxng.apiKey}` : ''}${config.jinaReader.enabled ? `
+echo       FIRECRAWL_API_URL=http://localhost:${config.jinaReader.port}
+echo       FIRECRAWL_API_KEY=${config.jinaReader.apiKey}` : ''}${config.bgeReranker.enabled ? `
+echo       RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}
+echo       JINA_API_KEY=${config.bgeReranker.apiKey}` : ''}
+echo    2. Restart LibreChat to apply the changes
+echo    3. Run 'python test_services.py' anytime to test your services
+echo.
+echo 🔑 API Keys: These are fixed default keys for testing in closed environments.
+echo.
+
+pause
+`;
+}
+
 export function generateReadme(config: ServiceConfig): string {
   const enabledServices = [];
   if (config.searxng.enabled) enabledServices.push("SearXNG");
@@ -323,12 +471,18 @@ Self-hosted search infrastructure for LibreChat with ${enabledServices.join(", "
 1. Extract the downloaded files to a directory
 2. Run the installation script (recommended):
 
+**Windows:**
+\`\`\`cmd
+install.bat
+\`\`\`
+Or double-click \`install.bat\`
+
+**Linux/Mac:**
 \`\`\`bash
 bash install_dockerimage.sh
 \`\`\`
 
-Or start manually:
-
+**Or start manually:**
 \`\`\`bash
 docker compose up -d
 \`\`\`
@@ -701,6 +855,7 @@ export async function downloadConfigPackage(config: ServiceConfig): Promise<void
   zip.file('.env', generateEnvFile(config));
   zip.file('README.md', generateReadme(config));
   zip.file('install_dockerimage.sh', generateInstallScript(config));
+  zip.file('install.bat', generateWindowsInstallScript(config));
   zip.file('search-stack-config.json', generateJsonConfig(config));
   zip.file('test_services.py', generateTestScript(config));
   
