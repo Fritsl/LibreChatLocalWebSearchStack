@@ -1,11 +1,15 @@
 # LibreChat Search Stack Generator
 
+## 🎥 Demo (Coming Soon)
+
+<!-- Add video demo when available -->
+**[▶️ Try the live demo](https://librechatlocalwebsearchstack.netlify.app/)** - Generate your local search stack in seconds!
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://librechatlocalwebsearchstack.netlify.app/)
-
-**🌐 Try it now: [https://librechatlocalwebsearchstack.netlify.app/](https://librechatlocalwebsearchstack.netlify.app/)**
+[![LibreChat](https://img.shields.io/badge/LibreChat-v0.7.9+-blue)](https://www.librechat.ai/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://librechatlocalwebsearchstack.netlify.app/)
 
 ## 🔗 Side Tool for LibreChatConfigurator
 
@@ -40,21 +44,29 @@ LibreChatConfigurator → Need Local Search? → Generate Stack → Run Install 
 
 ## Why This Exists
 
-**LibreChat's search capabilities require multiple Docker services working together.** Setting up SearXNG for search, Jina Reader for web scraping, and BGE Reranker for result ranking involves:
+**LibreChat's local search stack requires three Docker services working in harmony, but setting them up shouldn't require hours of Docker debugging.**
 
-- Finding the right Docker images (many are outdated or broken)
-- Configuring ports, environment variables, and resource limits
-- Writing Docker Compose files with proper service definitions
-- Creating installation scripts for different operating systems
-- Manually configuring LibreChat to connect to these services
+Configuring LibreChat's web search feature (available in v0.7.9+) involves deploying SearXNG for meta-search, Jina Reader for web scraping, and BGE Reranker for ML-powered result ranking. This requires:
 
-**This tool solves that.** Generate a complete, tested search infrastructure package in one click:
+- Finding working Docker images (many community images are outdated or broken)
+- Configuring complex networking between containers and LibreChat
+- Setting up environment variables, ports, and resource limits correctly
+- Writing Docker Compose files with health checks and restart policies
+- Creating cross-platform installation scripts
+- Manually configuring LibreChat's YAML to connect to these services
 
-- **Tested Docker Images** - Uses working, community-maintained images (no broken containers)
-- **1-Click Installation** - Download a complete package with Docker Compose, environment files, and bash scripts
-- **Auto-Configuration** - Includes JSON config that imports directly into LibreChatConfigurator
-- **Resource Optimized** - Pre-configured memory limits and health checks
-- **Beginner-Friendly** - No Docker knowledge required
+**This tool solves that.** Whether you're setting up LibreChat for your own use or deploying for others, you get:
+
+- **Working Docker Images** - Pre-tested, community-maintained images (no broken containers)
+- **Docker Networking** - Automatic shared network setup for LibreChat container communication
+- **1-Click Installation** - Complete package with Docker Compose, scripts for Windows/Mac/Linux
+- **Auto-Configuration** - JSON config that imports directly into LibreChatConfigurator
+- **Resource Optimized** - Pre-configured memory limits and health checks for stable operation
+- **Beginner-Friendly** - No Docker or YAML knowledge required
+
+**Built by the community, for the community.** As LibreChat adds new search features, this tool evolves with it. Missing a configuration option or want to add a new service? Contributions welcome!
+
+**Help make LibreChat's search accessible to everyone.** Whether you're fixing a bug, improving Docker configurations, or enhancing the user experience, your contributions help more people deploy powerful local search without the setup headaches.
 
 ## Quick Start - Use Online
 
@@ -196,6 +208,57 @@ When you click **"Generate & Download"**, you get a ZIP file containing:
 | **Jina Reader** | `ghcr.io/intergalacticalvariable/reader` | Web scraping & content extraction | 3000 |
 | **BGE Reranker** | `wkao/bge-reranker-v2-m3` | ML-based result ranking | 8787 |
 
+## LibreChat Compatibility
+
+### Supported Versions
+
+This tool generates configurations compatible with **LibreChat v0.7.9+** (web search feature introduced in v0.7.9).
+
+### Service Components
+
+LibreChat's web search requires three components working together:
+
+| Component | Role | This Tool Provides | LibreChat Config Mapping |
+|-----------|------|-------------------|--------------------------|
+| **Search Provider** | Performs web searches | **SearXNG** (`latest`) | `searchProvider: "searxng"` |
+| **Scraper** | Extracts content from URLs | **Jina Reader** (Firecrawl-compatible) | `scraperType: "firecrawl"` |
+| **Reranker** | ML-powered result ranking | **BGE Reranker v2-m3** (Jina API-compatible) | `rerankerType: "jina"` |
+
+### Technical Details
+
+**SearXNG** (Search Engine)
+- **Version**: Latest stable release
+- **API Format**: JSON output (`format=json`)
+- **Features**: Privacy-focused meta-search aggregating 70+ search engines
+- **Network**: Supports X-Forwarded-For headers for query logging
+- **Authentication**: Configurable API key (default: `searxng-default-key-12345`)
+
+**Jina Reader** (Web Scraper / Firecrawl Alternative)
+- **Version**: Latest from `ghcr.io/intergalacticalvariable/reader`
+- **Compatibility**: Drop-in Firecrawl replacement
+- **API**: RESTful endpoint at `http://service:3000/{url_to_crawl}`
+- **Features**: Clean content extraction, JavaScript rendering
+- **Configuration**: Timeout (30s default), max pages limit
+- **Authentication**: Configurable API key (default: `jina-default-key-67890`)
+
+**BGE Reranker v2-m3** (Result Ranking)
+- **Version**: BAAI/bge-reranker-v2-m3 (278M parameters)
+- **Docker Image**: `wkao/bge-reranker-v2-m3` (community-maintained)
+- **API Compatibility**: Jina Reranker API-compatible endpoint
+- **Endpoint**: POST `/api/v1/rerank` with JSON payload
+- **Features**: Multilingual support (100+ languages), optimized for RAG
+- **Performance**: Batch processing up to 16 documents
+- **Authentication**: Configurable API key (default: `reranker-default-key-abcde`)
+
+### Docker Network Architecture
+
+- **Shared Network**: All services join external Docker network (default: `librechat`)
+- **Container DNS**: Services accessible via container names (`searxng:8080`, `jina-reader:3000`, `bge-reranker:8787`)
+- **LibreChat Integration**: Import `search-stack-config.json` to auto-configure container URLs
+- **Host Access**: Services also available via localhost URLs for testing
+
+**[📚 LibreChat Web Search Documentation](https://www.librechat.ai/docs/features/web_search)**
+
 ## Integration Workflow
 
 ### The Recommended Way to Set Up LibreChat with Local Search
@@ -250,26 +313,7 @@ The `search-stack-config.json` uses LibreChat's official configuration structure
 
 **Note:** Ports match your Docker configuration. LibreChatConfigurator reads these values and configures LibreChat to connect to your local search stack.
 
-## Service Configuration
-
-### SearXNG (Search Engine)
-- **Purpose**: Meta-search aggregating results from Google, Bing, DuckDuckGo, etc.
-- **Default Port**: 8080
-- **Resource Limits**: 512MB RAM
-- **Environment**: Safe search enabled, JSON format output
-
-### Jina Reader (Web Scraper)
-- **Purpose**: Firecrawl-compatible content extraction and web scraping
-- **Default Port**: 3000
-- **Docker Image**: `ghcr.io/intergalacticalvariable/reader` (community-maintained)
-- **Resource Limits**: 1GB RAM
-
-### BGE Reranker v2-m3 (Result Ranking)
-- **Purpose**: ML-based reranking for better search result quality
-- **Default Port**: 8787
-- **Docker Image**: `wkao/bge-reranker-v2-m3` (working community build)
-- **Resource Limits**: 2GB RAM
-- **Model**: BAAI/bge-reranker-v2-m3
+**For detailed service specifications, see [LibreChat Compatibility](#librechat-compatibility) above.**
 
 ## Architecture
 
