@@ -595,14 +595,14 @@ export function generateJsonConfig(config: ServiceConfig): string {
     configuration: {
       webSearch: {
         searchProvider: "searxng",
-        searxngInstanceUrl: config.searxng.enabled ? `http://localhost:${config.searxng.port}` : "",
+        searxngInstanceUrl: config.searxng.enabled ? "http://searxng:8080" : "",
         searxngApiKey: config.searxng.enabled ? config.searxng.apiKey : "",
         scraperType: "firecrawl",
-        firecrawlApiUrl: config.jinaReader.enabled ? `http://localhost:${config.jinaReader.port}` : "",
+        firecrawlApiUrl: config.jinaReader.enabled ? "http://jina-reader:3000" : "",
         firecrawlApiKey: config.jinaReader.enabled ? config.jinaReader.apiKey : "",
         rerankerType: "jina",
         jinaApiKey: config.bgeReranker.enabled ? config.bgeReranker.apiKey : "",
-        jinaRerankerUrl: config.bgeReranker.enabled ? `http://localhost:${config.bgeReranker.port}` : "",
+        jinaRerankerUrl: config.bgeReranker.enabled ? "http://bge-reranker:8787" : "",
         scraperTimeout: 7500,
         safeSearch: true
       }
