@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,8 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { RefreshCw, Send } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import type { ServiceConfig } from '@shared/schema';
 
 interface ServiceCardProps {
@@ -47,10 +45,6 @@ const serviceVersions = {
 export function ServiceCard({ service, config, onConfigChange }: ServiceCardProps) {
   const info = serviceInfo[service];
   const serviceConfig = config[service] as any;
-  const [testInput, setTestInput] = useState('');
-  const [testResponse, setTestResponse] = useState<string>('');
-  const [isTestLoading, setIsTestLoading] = useState(false);
-  const [testError, setTestError] = useState<string>('');
 
   const updateServiceConfig = (updates: any) => {
     onConfigChange({
@@ -61,30 +55,6 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
   const generateRandomKey = () => {
     const randomKey = crypto.randomUUID();
     updateServiceConfig({ apiKey: randomKey });
-  };
-
-  const testService = async () => {
-    setIsTestLoading(true);
-    setTestError('');
-    setTestResponse('');
-
-    try {
-      const url = `http://localhost:${serviceConfig.port}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: testInput }),
-      });
-
-      const data = await response.json();
-      setTestResponse(JSON.stringify(data, null, 2));
-    } catch (error) {
-      setTestError(error instanceof Error ? error.message : 'Failed to connect to service');
-    } finally {
-      setIsTestLoading(false);
-    }
   };
 
   return (
@@ -317,75 +287,6 @@ export function ServiceCard({ service, config, onConfigChange }: ServiceCardProp
             Add additional volume mounts (one per line)
           </p>
         </div>
-
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="test" className="border-border">
-            <AccordionTrigger 
-              data-testid={`accordion-${service}-test`}
-              className="text-sm font-medium text-foreground hover:no-underline"
-            >
-              🧪 Test Service
-            </AccordionTrigger>
-            <AccordionContent className="space-y-3 pt-3">
-              <div>
-                <Label htmlFor={`${service}-test-input`} className="text-sm font-medium text-foreground mb-2 block">
-                  Test Input
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    id={`${service}-test-input`}
-                    data-testid={`input-${service}-test`}
-                    type="text"
-                    value={testInput}
-                    onChange={(e) => setTestInput(e.target.value)}
-                    placeholder="Enter test query or data..."
-                    className="bg-input border-border flex-1"
-                    disabled={!serviceConfig.enabled}
-                  />
-                  <Button
-                    data-testid={`button-${service}-test`}
-                    onClick={testService}
-                    disabled={!serviceConfig.enabled || isTestLoading || !testInput}
-                    className="shrink-0"
-                  >
-                    {isTestLoading ? (
-                      <RefreshCw className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4" />
-                    )}
-                    <span className="ml-2">Test</span>
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Send POST request to http://localhost:{serviceConfig.port}
-                </p>
-              </div>
-
-              {testError && (
-                <div 
-                  data-testid={`error-${service}-test`}
-                  className="p-3 bg-destructive/10 border border-destructive/20 rounded-md"
-                >
-                  <p className="text-sm text-destructive">❌ {testError}</p>
-                </div>
-              )}
-
-              {testResponse && (
-                <div>
-                  <Label className="text-sm font-medium text-foreground mb-2 block">
-                    Response
-                  </Label>
-                  <pre 
-                    data-testid={`response-${service}-test`}
-                    className="p-3 bg-muted border border-border rounded-md text-xs overflow-x-auto"
-                  >
-                    {testResponse}
-                  </pre>
-                </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
       </CardContent>
     </Card>
   );
