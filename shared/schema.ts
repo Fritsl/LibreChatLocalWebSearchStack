@@ -3,6 +3,7 @@ import { z } from "zod";
 export const serviceConfigSchema = z.object({
   enableHealthChecks: z.boolean().default(true),
   restartPolicy: z.enum(["unless-stopped", "always", "on-failure", "no"]).default("unless-stopped"),
+  networkName: z.string().min(1).default("librechat"),
   searxng: z.object({
     enabled: z.boolean().default(true),
     port: z.number().min(1000).max(65535).default(8080),
