@@ -376,6 +376,18 @@ if errorlevel 1 (
 echo ✅ Docker and Docker Compose are installed
 echo.
 
+REM Create Docker network if it doesn't exist
+set NETWORK=${config.networkName}
+echo 🌐 Setting up Docker network: %NETWORK%
+docker network inspect %NETWORK% >nul 2>nul
+if errorlevel 1 (
+    docker network create %NETWORK%
+    echo ✅ Created network '%NETWORK%'
+) else (
+    echo ✅ Network '%NETWORK%' already exists
+)
+echo.
+
 REM Create necessary directories
 echo 📁 Creating directories...
 ${directories.map(dir => `if not exist "${dir}" mkdir "${dir}"`).join('\n')}
