@@ -1,0 +1,77 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\frits\Downloads\librechat-search-stack> docker compose logs --tail=50
+librechat-searxng  | SearXNG 2025.10.1-06e4f4f75
+librechat-jina     |   userAgent: undefined,
+librechat-searxng  | ...
+librechat-searxng  | ... INFORMATION
+librechat-searxng  | ... "/etc/searxng/settings.yml" does not exist, creating from template...
+librechat-searxng  | ...
+librechat-searxng  | [INFO] Starting granian (main PID: 1)
+librechat-searxng  | [INFO] Listening at: http://:::8080
+librechat-searxng  | [INFO] Spawning worker-1 with PID: 21
+librechat-jina     |   proxyUrl: undefined
+librechat-jina     | }
+librechat-searxng  | 2025-10-01 11:27:17,158 ERROR:searx.engines: Missing engine config attribute: "yacy images.base_url"
+librechat-jina     | Invalid URL: http:// TypeError [ERR_INVALID_URL]: Invalid URL
+librechat-jina     |     at new NodeError (node:internal/errors:405:5)
+librechat-jina     |     at new URL (node:internal/url:676:13)
+librechat-searxng  | 2025-10-01 11:27:17,188 WARNING:searx.search.processors: Engine of name 'ahmia' does not exists.
+librechat-searxng  | 2025-10-01 11:27:17,206 WARNING:searx.search.processors: Engine of name 'torch' does not exists.
+librechat-searxng  | 2025-10-01 11:27:17,210 WARNING:searx.search.processors: Engine of name 'yacy images' does not exists.
+librechat-jina     |     at CrawlerHost.crawl (/app/build/cloud-functions/crawler.js:564:29)
+librechat-jina     |     at /app/build/server.js:19:27
+librechat-jina     |     at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)
+librechat-searxng  | 2025-10-01 11:27:17,217 WARNING:searx.botdetection.config: missing config file: /etc/searxng/limiter.toml
+librechat-searxng  | [INFO] Started worker-1
+librechat-searxng  | [INFO] Started worker-1 runtime-1
+librechat-searxng  | 2025-10-01 11:27:41,980 ERROR:searx.botdetection: X-Forwarded-For nor X-Real-IP header is set!
+librechat-jina     |     at next (/app/node_modules/express/lib/router/route.js:149:13)
+librechat-jina     |     at next (/app/node_modules/express/lib/router/route.js:145:7)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7) {
+librechat-reranker  | INFO:     Started server process [1]
+librechat-reranker  | INFO:     Waiting for application startup.
+librechat-reranker  | INFO:     Application startup complete.
+librechat-jina      |   input: 'http://',
+librechat-jina      |   code: 'ERR_INVALID_URL'
+librechat-jina      | }
+librechat-jina      | [Crawler] INFO: Crawl request received for URL: /
+librechat-jina      | Crawl method called with request: /
+librechat-reranker  | INFO:     Uvicorn running on http://0.0.0.0:6006 (Press CTRL+C to quit)
+librechat-jina      | req.headers: {"host":"localhost:3000","user-agent":"curl/8.5.0","accept":"*/*"}
+librechat-jina      | Request headers: { host: 'localhost:3000', 'user-agent': 'curl/8.5.0', accept: '*/*' }
+librechat-jina      | Request headers: { host: 'localhost:3000', 'user-agent': 'curl/8.5.0', accept: '*/*' }
+librechat-jina      | Crawler options: CrawlerOptionsHeaderOnly {
+librechat-jina      |   respondWith: 'default',
+librechat-jina      |   withGeneratedAlt: false,
+librechat-jina      |   withLinksSummary: false,
+librechat-jina      |   withImagesSummary: false,
+librechat-jina      |   noCache: false,
+librechat-jina      |   keepImgDataUrl: false,
+librechat-jina      |   withIframe: false,
+librechat-jina      |   removeSelector: undefined,
+librechat-jina      |   targetSelector: undefined,
+librechat-jina      |   waitForSelector: undefined,
+librechat-jina      |   userAgent: undefined,
+librechat-jina      |   proxyUrl: undefined
+librechat-jina      | }
+librechat-jina      | Invalid URL: http:// TypeError [ERR_INVALID_URL]: Invalid URL
+librechat-jina      |     at new NodeError (node:internal/errors:405:5)
+librechat-jina      |     at new URL (node:internal/url:676:13)
+librechat-jina      |     at CrawlerHost.crawl (/app/build/cloud-functions/crawler.js:564:29)
+librechat-jina      |     at /app/build/server.js:19:27
+librechat-jina      |     at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:149:13)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7)
+librechat-jina      |     at next (/app/node_modules/express/lib/router/route.js:145:7) {
+librechat-jina      |   input: 'http://',
+librechat-jina      |   code: 'ERR_INVALID_URL'
+librechat-jina      | }
+PS C:\Users\frits\Downloads\librechat-search-stack>

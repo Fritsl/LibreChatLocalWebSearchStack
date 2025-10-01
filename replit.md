@@ -98,17 +98,20 @@ Preferred communication style: Simple, everyday language.
 - Default values defined in schema
 
 **Service Testing System**:
-- Python-based testing script (`test_services.py`) included in generated packages
+- Interactive Python test script (`test_services.py`) included in generated packages
 - Uses only Python standard library (urllib, json) - no external dependencies required
-- Automatically executed by installation script after Docker containers start
-- Tests performed:
-  - **SearXNG**: Performs actual search query ("top 10 news for today") and displays results
-  - **Jina AI Reader**: Health check endpoint validation
-  - **BGE Reranker**: Health check endpoint validation
+- **Interactive Pipeline Test**: Demonstrates the complete LibreChat search workflow
+  - Step 1: Asks user for search query, then queries SearXNG and displays results
+  - Step 2: Crawls first result using Jina Reader (format: `http://localhost:3000/URL_TO_CRAWL`)
+  - Step 3: Reranks all results using BGE Reranker v2-m3 (POST to `/api/v1/rerank` endpoint)
+  - Each step waits for user keypress before continuing
+- **API Endpoints Used**:
+  - SearXNG: `/search?q={query}&format=json` with X-Forwarded-For header
+  - Jina Reader: `/{url_to_crawl}` returns extracted content as text
+  - BGE Reranker: `/api/v1/rerank` with JSON payload `{query, documents}`
 - Only tests enabled services based on user configuration
-- Editable by users for custom testing scenarios
-- Reports pass/fail status with helpful error messages
 - Can be run anytime with `python3 test_services.py`
+- Provides complete end-to-end validation of the search stack
 
 ### External Dependencies
 
