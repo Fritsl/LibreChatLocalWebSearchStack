@@ -466,34 +466,13 @@ Self-hosted search infrastructure for LibreChat with ${enabledServices.join(", "
 
 ## Quick Start
 
-**The \`.env\` file is pre-configured and ready to use!** All services are configured to use these environment variables automatically.
+1. Extract files to a directory
+2. Run the installation script:
+   - **Windows**: Double-click \`install_dockerimage.bat\` or run \`install_dockerimage.bat\` in PowerShell
+   - **Linux/Mac**: Run \`bash install_dockerimage.sh\`
+   - **Manual**: Run \`docker compose up -d\`
 
-1. Extract the downloaded files to a directory
-2. Run the installation script (recommended):
-
-**Windows:**
-\`\`\`cmd
-install.bat
-\`\`\`
-Or double-click \`install.bat\`
-
-**Linux/Mac:**
-\`\`\`bash
-bash install_dockerimage.sh
-\`\`\`
-
-**Or start manually:**
-\`\`\`bash
-docker compose up -d
-\`\`\`
-
-3. Verify services are running:
-
-\`\`\`bash
-docker compose ps
-\`\`\`
-
-**Note:** The \`docker-compose.yml\` file automatically loads all settings from the \`.env\` file. No manual configuration needed!
+The \`.env\` file is pre-configured - no manual setup needed!
 
 ## Services
 
@@ -855,7 +834,7 @@ export async function downloadConfigPackage(config: ServiceConfig): Promise<void
   zip.file('.env', generateEnvFile(config));
   zip.file('README.md', generateReadme(config));
   zip.file('install_dockerimage.sh', generateInstallScript(config));
-  zip.file('install.bat', generateWindowsInstallScript(config));
+  zip.file('install_dockerimage.bat', generateWindowsInstallScript(config));
   zip.file('search-stack-config.json', generateJsonConfig(config));
   zip.file('test_services.py', generateTestScript(config));
   

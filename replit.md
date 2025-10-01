@@ -83,11 +83,11 @@ Preferred communication style: Simple, everyday language.
   - `.env`: Pre-configured environment variables (ready to use, not a template)
   - `README.md`: Setup instructions and documentation
   - `install_dockerimage.sh`: Unix/Linux/Mac installation script with bash safety flags (`set -Eeuo pipefail`)
-  - `install.bat`: Windows installation script (native batch file for PowerShell/CMD)
+  - `install_dockerimage.bat`: Windows installation script (native batch file for PowerShell/CMD)
   - `search-stack-config.json`: LibreChat-compatible JSON configuration (auto-included in ZIP, can also be exported separately)
   - `test_services.py`: Python script for testing services (uses standard library only, no external dependencies)
 
-**Note:** Both installation scripts (`install_dockerimage.sh` and `install.bat`) are kept synchronized with identical functionality. Any updates to one script must be mirrored in the other to maintain cross-platform compatibility.
+**Note:** Both installation scripts (`install_dockerimage.sh` and `install_dockerimage.bat`) are kept synchronized with identical functionality. Any updates to one script must be mirrored in the other to maintain cross-platform compatibility.
 
 **Environment Variable Integration**:
 - Docker Compose uses `${VARIABLE}` syntax to reference all configuration from `.env` file
