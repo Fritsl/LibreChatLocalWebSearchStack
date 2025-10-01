@@ -26,7 +26,7 @@ export const configPresets: ConfigPreset[] = [
         customSettings: '',
       },
       jinaReader: {
-        enabled: true,
+        enabled: false,
         port: 3000,
         memoryLimit: '512MB',
         version: 'latest',
@@ -36,7 +36,7 @@ export const configPresets: ConfigPreset[] = [
         customVolumes: '',
       },
       bgeReranker: {
-        enabled: true,
+        enabled: false,
         port: 8787,
         memoryLimit: '2GB',
         version: 'latest',
@@ -65,7 +65,7 @@ export const configPresets: ConfigPreset[] = [
         customSettings: '',
       },
       jinaReader: {
-        enabled: true,
+        enabled: false,
         port: 3000,
         memoryLimit: '2GB',
         version: 'latest',
@@ -75,7 +75,7 @@ export const configPresets: ConfigPreset[] = [
         customVolumes: '',
       },
       bgeReranker: {
-        enabled: true,
+        enabled: false,
         port: 8787,
         memoryLimit: '8GB',
         version: 'latest',
@@ -104,7 +104,7 @@ export const configPresets: ConfigPreset[] = [
         customSettings: '',
       },
       jinaReader: {
-        enabled: true,
+        enabled: false,
         port: 3000,
         memoryLimit: '512MB',
         version: 'latest',
@@ -143,7 +143,7 @@ export const configPresets: ConfigPreset[] = [
         customSettings: '',
       },
       jinaReader: {
-        enabled: true,
+        enabled: false,
         port: 3000,
         memoryLimit: '1GB',
         version: 'latest',
@@ -153,7 +153,7 @@ export const configPresets: ConfigPreset[] = [
         customVolumes: '',
       },
       bgeReranker: {
-        enabled: true,
+        enabled: false,
         port: 8787,
         memoryLimit: '4GB',
         version: 'latest',

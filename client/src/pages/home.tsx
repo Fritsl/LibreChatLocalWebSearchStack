@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { ServiceCard } from "@/components/service-card";
 import { PreviewPanel } from "@/components/preview-panel";
 import { downloadConfigPackage, downloadJsonConfig } from "@/lib/file-generator";
 import { serviceConfigSchema, type ServiceConfig } from '@shared/schema';
 import { configPresets } from "@/lib/presets";
-import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson, ExternalLink } from "lucide-react";
+import { Download, Github, Moon, Sun, HeartPulse, Settings, Zap, FileJson, ExternalLink, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getVersionInfo } from "@shared/version";
 
@@ -352,6 +353,35 @@ export default function Home() {
                   config={config} 
                   onConfigChange={handleConfigChange} 
                 />
+                
+                {/* LibreChat Compatibility Disclaimer */}
+                <Alert className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+                  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+                  <AlertTitle className="text-amber-900 dark:text-amber-200">LibreChat Compatibility Notice</AlertTitle>
+                  <AlertDescription className="text-amber-800 dark:text-amber-300">
+                    <p className="mb-3">
+                      LibreChat's native Web Search requires three services: a search provider, a web scraper, and a result reranker. 
+                    </p>
+                    <p className="mb-3">
+                      <strong>Current Limitation:</strong> As of October 2025, LibreChat only supports cloud-based APIs for scraping and reranking (Firecrawl and Jina). 
+                      Self-hosted scraper/reranker services from this tool are not yet natively supported.
+                    </p>
+                    <p className="mb-3">
+                      <strong>What This Tool Provides:</strong> Use this companion tool to configure SearXNG for basic web search inside LibreChat.
+                    </p>
+                    <p>
+                      <strong>For Full Functionality:</strong> To enable scraping and reranking in LibreChat, you must use the official cloud endpoints:
+                    </p>
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                      <li>Firecrawl (Scraper): <code className="text-xs bg-amber-100 dark:bg-amber-900/30 px-1 py-0.5 rounded">https://api.firecrawl.dev</code></li>
+                      <li>Jina (Reranker): <code className="text-xs bg-amber-100 dark:bg-amber-900/30 px-1 py-0.5 rounded">https://api.jina.ai/v1/rerank</code></li>
+                    </ul>
+                    <p className="mt-3 text-sm">
+                      Configure these in LibreChat using your API keys via the environment variables: FIRECRAWL_API_URL, FIRECRAWL_API_KEY, JINA_API_URL, and JINA_API_KEY.
+                    </p>
+                  </AlertDescription>
+                </Alert>
+
                 <ServiceCard 
                   service="jinaReader" 
                   config={config} 
