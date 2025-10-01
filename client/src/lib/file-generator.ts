@@ -497,7 +497,40 @@ ${config.searxng.enabled ? `### SearXNG (Port ${config.searxng.port})
 
 ` : ''}## LibreChat Integration
 
-Add these environment variables to your LibreChat configuration:
+### Network Setup
+
+**If LibreChat runs in Docker**, it must join the shared network to communicate with these services:
+
+\`\`\`bash
+docker network create ${config.networkName}
+\`\`\`
+
+Add this to your LibreChat docker-compose.yml:
+\`\`\`yaml
+networks:
+  ${config.networkName}:
+    external: true
+
+services:
+  librechat:
+    networks:
+      - ${config.networkName}
+\`\`\`
+
+### Environment Variables
+
+**For LibreChat in Docker** (container-to-container), use service DNS names:
+
+\`\`\`env
+${config.searxng.enabled ? `SEARXNG_INSTANCE_URL=http://searxng:8080
+SEARXNG_API_KEY=${config.searxng.apiKey}` : ''}
+${config.jinaReader.enabled ? `FIRECRAWL_API_URL=http://jina-reader:3000
+FIRECRAWL_API_KEY=${config.jinaReader.apiKey}` : ''}
+${config.bgeReranker.enabled ? `RERANKER_BASE_URL=http://bge-reranker:8787
+JINA_API_KEY=${config.bgeReranker.apiKey}` : ''}
+\`\`\`
+
+**For LibreChat on host** (not in Docker), use localhost:
 
 \`\`\`env
 ${config.searxng.enabled ? `SEARXNG_INSTANCE_URL=http://localhost:${config.searxng.port}
@@ -507,6 +540,8 @@ FIRECRAWL_API_KEY=${config.jinaReader.apiKey}` : ''}
 ${config.bgeReranker.enabled ? `RERANKER_BASE_URL=http://localhost:${config.bgeReranker.port}
 JINA_API_KEY=${config.bgeReranker.apiKey}` : ''}
 \`\`\`
+
+**Tip:** The included \`search-stack-config.json\` uses container DNS names for Docker deployments.
 
 ### API Keys
 
