@@ -2,9 +2,13 @@
 
 ## Overview
 
-This is a web application that generates Docker Compose configurations for the LibreChat Search Stack. It provides an interactive UI for configuring three services (SearXNG, Jina AI Reader, and BGE Reranker v2-m3) and generates downloadable configuration files including docker-compose.yml, .env.example, README.md, a one-click installation script, and a LibreChat-compatible JSON configuration file.
+This is a **companion tool** for [LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator) that generates Docker Compose configurations for LibreChat's local search stack. It provides an interactive UI for configuring three services (SearXNG, Jina AI Reader, and BGE Reranker v2-m3) and generates downloadable configuration files including docker-compose.yml, .env, README.md, installation scripts (Unix and Windows), and a LibreChat-compatible JSON configuration file.
 
-**Integration with LibreChatConfigurator**: This tool is designed to work in tandem with [LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator). Generate the Docker search stack here, then import the `search-stack-config.json` into LibreChatConfigurator to auto-configure LibreChat's search settings.
+**Integration Workflow**: 
+1. Start with LibreChatConfigurator (main tool) to configure your LibreChat instance
+2. When you need local search capabilities, use this tool to generate the Docker search stack
+3. Run the installation scripts to deploy the Docker services
+4. Import the `search-stack-config.json` back into LibreChatConfigurator (Configuration → Import Merge JSON or directly under Search section) to auto-configure LibreChat's search settings
 
 The application is a configuration generator tool - it doesn't require persistent data storage and operates entirely client-side for configuration generation.
 

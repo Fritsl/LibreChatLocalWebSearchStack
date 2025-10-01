@@ -82,9 +82,10 @@ LibreChatConfigurator → Need Local Search? → Generate Stack → Run Install 
    ```
 
 4. **Import into LibreChatConfigurator**
-   - Go to **Configuration → Import Merge JSON** in LibreChatConfigurator
+   - Open the extracted folder and find `search-stack-config.json`
+   - In LibreChatConfigurator: **Configuration → Import Merge JSON**
    - Or use the import function directly under the **Search** section
-   - Select the `search-stack-config.json` file from the extracted ZIP
+   - Select the `search-stack-config.json` file
    - Done! Your search settings are auto-configured 🎉
 
 ### ✨ What You Get
@@ -166,7 +167,7 @@ The app will build and serve on port 5000 in production mode.
 
 - **3 Essential Search Services**: Configure SearXNG, Jina Reader (Firecrawl alternative), and BGE Reranker v2-m3
 - **Tested Docker Images**: Uses working community-maintained images (no broken containers)
-- **Live Preview**: See docker-compose.yml, .env.example, README.md, and install script in real-time
+- **Live Preview**: See docker-compose.yml, .env, README.md, and install scripts in real-time
 - **JSON Export**: Generate `search-stack-config.json` that imports directly into LibreChatConfigurator
 - **Complete Package**: Download ZIP with all 5 files ready for deployment
 - **1-Click Installation**: Bash script included for automatic Docker deployment
@@ -180,10 +181,12 @@ When you click **"Generate & Download"**, you get a ZIP file containing:
 | File | Description |
 |------|-------------|
 | `docker-compose.yml` | Complete Docker Compose configuration with all 3 services |
-| `.env.example` | Environment variables template with your configured ports |
+| `.env` | Pre-configured environment variables (ready to use, no editing needed) |
 | `README.md` | Setup instructions and service documentation |
-| `install_dockerimage.sh` | 1-click bash installation script |
-| `search-stack-config.json` | LibreChat search configuration (import into LibreChatConfigurator) |
+| `install_dockerimage.sh` | Unix/Linux/Mac installation script |
+| `install_dockerimage.bat` | Windows installation script |
+| `search-stack-config.json` | **LibreChat search configuration** - Import into LibreChatConfigurator |
+| `test_services.py` | Python test script to verify all services are working |
 
 ### 🐳 Docker Services
 
