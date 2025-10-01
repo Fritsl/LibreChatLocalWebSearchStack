@@ -7,26 +7,35 @@
 
 **🌐 Try it now: [https://librechatlocalwebsearchstack.netlify.app/](https://librechatlocalwebsearchstack.netlify.app/)**
 
-## 🔗 Works With LibreChatConfigurator
+## 🔗 Side Tool for LibreChatConfigurator
 
-This tool is designed to work in tandem with **[LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator)** - together they provide a complete 1-click LibreChat search infrastructure setup:
+This is a **companion tool** for **[LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator)** that simplifies setting up a local search stack for LibreChat.
+
+**Main Tool: [LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator)** - Configure all LibreChat settings (AI providers, OAuth, database, etc.)
+
+**This Tool: Local Search Stack Generator** - Generate Docker containers for LibreChat's search capabilities when you need them
 
 **How They Work Together:**
 
-1. **🔧 LibreChat Search Stack Generator (this tool)** → Generates Docker containers and configuration
-   - Creates Docker Compose files for SearXNG, Jina Reader, and BGE Reranker
-   - Generates `search-stack-config.json` with all search settings
-   - Provides installation scripts for 1-click Docker deployment
+1. **⚙️ Start with LibreChatConfigurator** - Configure your LibreChat instance
+   - Set up AI providers (OpenAI, Anthropic, etc.)
+   - Configure authentication and OAuth
+   - Set up database and file storage
 
-2. **⚙️ LibreChatConfigurator** → Configures LibreChat application settings
-   - Import the `search-stack-config.json` to auto-fill search settings
-   - Configure AI providers, OAuth, database, and all other LibreChat options
-   - Generate complete LibreChat deployment files
+2. **🔍 When you need local search** - Use this tool to generate the Docker stack
+   - Configure SearXNG, Jina Reader, and BGE Reranker services
+   - Download the generated package with Docker Compose files
+   - Run the installation script to deploy services
+
+3. **🔄 Import configuration back** - Auto-configure LibreChat's search settings
+   - In LibreChatConfigurator: **Configuration → Import Merge JSON**
+   - Or directly under **Search** section, use the import function
+   - Your local search stack is now connected to LibreChat!
 
 **Complete Workflow:**
 ```
-Generate Search Stack → Import JSON Config → Configure LibreChat → Deploy Everything
-     (this tool)      →  (LibreChatConfigurator)  →        (1-click setup)
+LibreChatConfigurator → Need Local Search? → Generate Stack → Run Install → Import JSON Config
+   (main tool)              (this tool)         (Docker)      (back to main tool)
 ```
 
 ## Why This Exists
@@ -47,19 +56,44 @@ Generate Search Stack → Import JSON Config → Configure LibreChat → Deploy 
 - **Resource Optimized** - Pre-configured memory limits and health checks
 - **Beginner-Friendly** - No Docker knowledge required
 
-## How to Use
+## Quick Start - Use Online
 
-**This tool generates Docker infrastructure packages. It doesn't run Docker itself - the generated files work on your local machine or server.**
+**When you reach the search configuration step in [LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator)**, follow this workflow:
 
-### 🌐 Use Online (Full Features)
+### 🚀 1-Minute Setup
 
-**[Launch Search Stack Generator](https://librechatlocalwebsearchstack.netlify.app/)** 
+1. **Open the online generator**: [https://librechatlocalwebsearchstack.netlify.app/](https://librechatlocalwebsearchstack.netlify.app/)
 
-- ✅ Configure all search service settings
-- ✅ Preview all generated files in real-time
-- ✅ Download complete ZIP package with all configuration files
-- ✅ Export JSON configuration for LibreChatConfigurator
+2. **Configure your services** (optional - defaults work great!)
+   - Adjust ports if needed
+   - Set resource limits for your system
+   - Click **"Generate & Download"**
+
+3. **Install the Docker stack**
+   ```bash
+   # Extract the downloaded ZIP
+   unzip librechat-search-stack.zip
+   cd librechat-search-stack
+   
+   # Run the installation script
+   ./install_dockerimage.sh    # Unix/Linux/Mac
+   # OR
+   install_dockerimage.bat     # Windows
+   ```
+
+4. **Import into LibreChatConfigurator**
+   - Go to **Configuration → Import Merge JSON** in LibreChatConfigurator
+   - Or use the import function directly under the **Search** section
+   - Select the `search-stack-config.json` file from the extracted ZIP
+   - Done! Your search settings are auto-configured 🎉
+
+### ✨ What You Get
+
 - ✅ No installation required - runs entirely in your browser
+- ✅ Configure all search service settings with live preview
+- ✅ Download complete ZIP package with all configuration files
+- ✅ Export JSON configuration for LibreChatConfigurator import
+- ✅ 1-click installation scripts for all platforms
 
 ### 💻 Run Locally (Alternative)
 
@@ -99,13 +133,11 @@ npm --version    # Should show npm version
 
 <a id="quick-start"></a>
 
-### Quick Start
+### Run Locally
 
 ```bash
 # Clone the repository
 git clone https://github.com/YOUR_USERNAME/librechat-search-stack.git
-
-# Navigate to folder
 cd librechat-search-stack
 
 # Install dependencies
@@ -117,12 +149,7 @@ npm run dev
 # Open http://localhost:5000 in your browser
 ```
 
-**What you get locally:**
-- ✅ Configure SearXNG, Jina Reader, and BGE Reranker services
-- ✅ Real-time preview of all generated files
-- ✅ Download individual files or complete ZIP package
-- ✅ Generate `search-stack-config.json` for LibreChatConfigurator import
-- ✅ 1-click installation script included
+Same features as the online version, but running on your own machine.
 
 ## Production Build
 
@@ -166,29 +193,35 @@ When you click **"Generate & Download"**, you get a ZIP file containing:
 | **Jina Reader** | `ghcr.io/intergalacticalvariable/reader` | Web scraping & content extraction | 3000 |
 | **BGE Reranker** | `wkao/bge-reranker-v2-m3` | ML-based result ranking | 8787 |
 
-## Integration with LibreChatConfigurator
+## Integration Workflow
 
-### Step-by-Step Integration
+### The Recommended Way to Set Up LibreChat with Local Search
 
-1. **Generate Search Stack** (this tool)
-   - Configure service ports and resource limits
+**Start with [LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator)** (the main configuration tool), then use this tool when you need local search capabilities.
+
+### Step-by-Step
+
+1. **🔧 Configure LibreChat** ([LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator))
+   - Run LibreChatConfigurator
+   - Set up AI providers (OpenAI, Anthropic, etc.)
+   - Configure authentication and OAuth
+   - Set up database and file storage
+
+2. **🔍 Need Local Search?** Use this tool to generate the Docker stack
+   - Open [https://librechatlocalwebsearchstack.netlify.app/](https://librechatlocalwebsearchstack.netlify.app/)
+   - Configure service ports and resource limits (or use defaults)
    - Click **"Generate & Download"** to get the ZIP package
-   - Extract the package and run `./install_dockerimage.sh`
+   - Extract and run the installation script (`./install_dockerimage.sh` or `.bat`)
 
-2. **Import Configuration** ([LibreChatConfigurator](https://github.com/Fritsl/LibreChatConfigurator))
-   - Open LibreChatConfigurator
-   - Go to **Package → Load Configuration**
-   - Import the `search-stack-config.json` file
+3. **🔄 Import Search Config** Back to LibreChatConfigurator
+   - In LibreChatConfigurator: **Configuration → Import Merge JSON**
+   - Or use the import function directly under the **Search** section
+   - Select `search-stack-config.json` from the downloaded ZIP
    - Search settings auto-populate with your Docker service URLs
 
-3. **Complete LibreChat Setup** (LibreChatConfigurator)
-   - Configure AI providers (OpenAI, Anthropic, etc.)
-   - Set up authentication and OAuth
-   - Generate LibreChat deployment files
-
-4. **Deploy Everything**
+4. **🚀 Deploy Everything**
    - Docker search stack runs on your configured ports
-   - LibreChat connects to local search services
+   - LibreChat connects to local search services via the imported config
    - Complete AI-powered search infrastructure ready!
 
 ### Configuration Mapping
