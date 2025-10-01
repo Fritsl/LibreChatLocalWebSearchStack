@@ -15,6 +15,7 @@ export const configPresets: ConfigPreset[] = [
     config: {
       enableHealthChecks: true,
       restartPolicy: 'unless-stopped',
+      networkName: 'librechat',
       searxng: {
         enabled: true,
         port: 8080,
@@ -53,6 +54,7 @@ export const configPresets: ConfigPreset[] = [
     config: {
       enableHealthChecks: true,
       restartPolicy: 'unless-stopped',
+      networkName: 'librechat',
       searxng: {
         enabled: true,
         port: 8080,
@@ -91,6 +93,7 @@ export const configPresets: ConfigPreset[] = [
     config: {
       enableHealthChecks: false,
       restartPolicy: 'unless-stopped',
+      networkName: 'librechat',
       searxng: {
         enabled: true,
         port: 8080,
@@ -129,6 +132,7 @@ export const configPresets: ConfigPreset[] = [
     config: {
       enableHealthChecks: true,
       restartPolicy: 'unless-stopped',
+      networkName: 'librechat',
       searxng: {
         enabled: true,
         port: 8080,

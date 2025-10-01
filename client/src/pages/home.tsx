@@ -204,6 +204,22 @@ export default function Home() {
                             Memory limits are configured per-service above.
                           </p>
                         </div>
+                        <div>
+                          <Label htmlFor="network-name" className="text-sm font-medium text-foreground mb-2 block">
+                            Docker Network Name
+                          </Label>
+                          <Input
+                            id="network-name"
+                            data-testid="input-network-name"
+                            value={config.networkName}
+                            onChange={(e) => handleConfigChange({ networkName: e.target.value })}
+                            className="bg-input border-border"
+                            placeholder="librechat"
+                          />
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Shared Docker network for container-to-container communication. Must match the network LibreChat uses.
+                          </p>
+                        </div>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
