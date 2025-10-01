@@ -15,7 +15,7 @@ export function PreviewPanel({ config }: PreviewPanelProps) {
 
   const tabs = [
     { id: 'docker-compose' as TabType, label: 'docker-compose.yml' },
-    { id: 'env' as TabType, label: '.env.example' },
+    { id: 'env' as TabType, label: '.env' },
     { id: 'readme' as TabType, label: 'README.md' },
     { id: 'install' as TabType, label: 'install_dockerimage.sh' },
   ];

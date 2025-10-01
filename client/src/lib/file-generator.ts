@@ -22,11 +22,11 @@ export function generateDockerCompose(config: ServiceConfig): string {
     image: searxng/searxng:${config.searxng.version}
     container_name: librechat-searxng
     environment:
-      - SEARXNG_BASE_URL=http://localhost:${config.searxng.port}/
+      - SEARXNG_BASE_URL=\${SEARXNG_BASE_URL}
       - SEARXNG_HOSTNAME=searxng
       ${config.searxng.customSettings ? config.searxng.customSettings.split('\n').map(line => `      - ${line.trim()}`).join('\n') : ''}
     ports:
-      - "${config.searxng.port}:8080"
+      - "\${SEARXNG_PORT}:8080"
     volumes:
       - ./searxng:/etc/searxng:rw${customVolumes ? '\n' + customVolumes : ''}
     restart: ${config.restartPolicy}
@@ -35,7 +35,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
     deploy:
       resources:
         limits:
-          memory: ${config.searxng.memoryLimit}`);
+          memory: \${SEARXNG_MEMORY_LIMIT}`);
   }
 
   if (config.jinaReader.enabled) {
@@ -55,10 +55,10 @@ export function generateDockerCompose(config: ServiceConfig): string {
     image: ghcr.io/intergalacticalvariable/reader:${config.jinaReader.version}
     container_name: librechat-jina
     environment:
-      - READER_TIMEOUT=${config.jinaReader.timeout}
-      - READER_MAX_PAGES=${config.jinaReader.maxPages}
+      - READER_TIMEOUT=\${JINA_TIMEOUT}
+      - READER_MAX_PAGES=\${JINA_MAX_PAGES}
     ports:
-      - "${config.jinaReader.port}:3000"${customVolumes ? `
+      - "\${JINA_PORT}:3000"${customVolumes ? `
     volumes:${customVolumes}` : ''}
     restart: ${config.restartPolicy}
     networks:
@@ -66,7 +66,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
     deploy:
       resources:
         limits:
-          memory: ${config.jinaReader.memoryLimit}`);
+          memory: \${JINA_MEMORY_LIMIT}`);
   }
 
   if (config.bgeReranker.enabled) {
@@ -86,10 +86,10 @@ export function generateDockerCompose(config: ServiceConfig): string {
     image: wkao/bge-reranker-v2-m3:${config.bgeReranker.version}
     container_name: librechat-reranker
     environment:
-      - MODEL_NAME=${config.bgeReranker.modelType}
-      - MAX_BATCH_SIZE=${config.bgeReranker.maxBatchSize}
+      - MODEL_NAME=\${RERANKER_MODEL}
+      - MAX_BATCH_SIZE=\${RERANKER_BATCH_SIZE}
     ports:
-      - "${config.bgeReranker.port}:8787"${customVolumes ? `
+      - "\${RERANKER_PORT}:8787"${customVolumes ? `
     volumes:${customVolumes}` : ''}
     restart: ${config.restartPolicy}
     networks:
@@ -97,7 +97,7 @@ export function generateDockerCompose(config: ServiceConfig): string {
     deploy:
       resources:
         limits:
-          memory: ${config.bgeReranker.memoryLimit}`);
+          memory: \${RERANKER_MEMORY_LIMIT}`);
   }
 
   return `services:
@@ -303,8 +303,16 @@ Self-hosted search infrastructure for LibreChat with ${enabledServices.join(", "
 
 ## Quick Start
 
-1. Clone or download this repository
-2. Run the stack:
+**The \`.env\` file is pre-configured and ready to use!** All services are configured to use these environment variables automatically.
+
+1. Extract the downloaded files to a directory
+2. Run the installation script (recommended):
+
+\`\`\`bash
+bash install_dockerimage.sh
+\`\`\`
+
+Or start manually:
 
 \`\`\`bash
 docker compose up -d
@@ -315,6 +323,8 @@ docker compose up -d
 \`\`\`bash
 docker compose ps
 \`\`\`
+
+**Note:** The \`docker-compose.yml\` file automatically loads all settings from the \`.env\` file. No manual configuration needed!
 
 ## Services
 
@@ -604,7 +614,7 @@ export async function downloadConfigPackage(config: ServiceConfig): Promise<void
   const zip = new JSZip();
   
   zip.file('docker-compose.yml', generateDockerCompose(config));
-  zip.file('.env.example', generateEnvFile(config));
+  zip.file('.env', generateEnvFile(config));
   zip.file('README.md', generateReadme(config));
   zip.file('install_dockerimage.sh', generateInstallScript(config));
   zip.file('search-stack-config.json', generateJsonConfig(config));

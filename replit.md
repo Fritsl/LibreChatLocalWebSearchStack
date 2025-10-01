@@ -79,12 +79,18 @@ Preferred communication style: Simple, everyday language.
 - JSZip library creates downloadable .zip packages
 - FileSaver.js handles browser downloads
 - Six generated files:
-  - `docker-compose.yml`: Service definitions with ports, environment, resource limits
-  - `.env.example`: Template environment variables
+  - `docker-compose.yml`: Service definitions using environment variables from .env file
+  - `.env`: Pre-configured environment variables (ready to use, not a template)
   - `README.md`: Setup instructions and documentation
   - `install_dockerimage.sh`: One-click bash installation script with automatic testing
   - `search-stack-config.json`: LibreChat-compatible JSON configuration (auto-included in ZIP, can also be exported separately)
   - `test_services.py`: Python script for testing services (uses standard library only, no external dependencies)
+
+**Environment Variable Integration**:
+- Docker Compose uses `${VARIABLE}` syntax to reference all configuration from `.env` file
+- All ports, memory limits, timeouts, API keys are defined in `.env`
+- Works out-of-the-box: users just run `docker compose up -d` after extraction
+- No manual configuration or file editing required
 
 **Configuration Schema**: 
 - Shared Zod schemas (`shared/schema.ts`) validate service configurations
